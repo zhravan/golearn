@@ -7,34 +7,55 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"sync"
+
+	"gopkg.in/yaml.v3"
 )
 
 //go:embed templates/**
 var templatesFS embed.FS
 
+//go:embed catalog.yaml
+var catalogFS embed.FS
+
 type Exercise struct {
-	Slug      string
-	Title     string
-	TestRegex string
-	Hints     []string
+	Slug      string   `yaml:"slug"`
+	Title     string   `yaml:"title"`
+	TestRegex string   `yaml:"test_regex"`
+	Hints     []string `yaml:"hints"`
 }
 
+var (
+	catalogOnce sync.Once
+	catalogData []Exercise
+)
+
 func catalog() []Exercise {
-	return []Exercise{
-		{Slug: "01_hello", Title: "Hello, Go!", TestRegex: ".*", Hints: []string{"Implement Hello() to return 'Hello, Go!'"}},
-		{Slug: "02_values", Title: "Values", TestRegex: ".*", Hints: []string{"Use fmt.Sprintf to format values."}},
-		{Slug: "03_variables", Title: "Variables", TestRegex: ".*", Hints: []string{"Use short declarations (:=) and return multiple values."}},
-		{Slug: "04_constants", Title: "Constants", TestRegex: ".*", Hints: []string{"Use math.Pi and constant expressions."}},
-		{Slug: "05_for", Title: "For", TestRegex: ".*", Hints: []string{"Accumulate a sum with a for loop."}},
-		{Slug: "06_if_else", Title: "If/Else", TestRegex: ".*", Hints: []string{"Handle negative, zero, and positive cases."}},
-		{Slug: "07_switch", Title: "Switch", TestRegex: ".*", Hints: []string{"Match multiple cases for weekend days."}},
-		{Slug: "08_arrays", Title: "Arrays", TestRegex: ".*", Hints: []string{"Iterate with range over a fixed-size array."}},
-		{Slug: "09_slices", Title: "Slices", TestRegex: ".*", Hints: []string{"Append values then compute a sum."}},
-		{Slug: "10_maps", Title: "Maps", TestRegex: ".*", Hints: []string{"Use strings.Fields and map[string]int for word counts."}},
-		{Slug: "11_functions", Title: "Functions", TestRegex: ".*", Hints: []string{"Pass a function and call it."}},
-		{Slug: "12_multi_return", Title: "Multiple Return Values", TestRegex: ".*", Hints: []string{"Return quotient, remainder, and an error for divide-by-zero."}},
-		{Slug: "13_variadic", Title: "Variadic Functions", TestRegex: ".*", Hints: []string{"Use '...' to accept any number of ints and sum them."}},
-	}
+	catalogOnce.Do(func() {
+		b, err := catalogFS.ReadFile("catalog.yaml")
+		if err != nil {
+			// Fallback minimal catalog
+			catalogData = []Exercise{{
+				Slug:      "01_hello",
+				Title:     "Hello, Go!",
+				TestRegex: ".*",
+				Hints:     []string{"Implement Hello() to return 'Hello, Go!'"},
+			}}
+			return
+		}
+		var items []Exercise
+		if err := yaml.Unmarshal(b, &items); err != nil || len(items) == 0 {
+			catalogData = []Exercise{{
+				Slug:      "01_hello",
+				Title:     "Hello, Go!",
+				TestRegex: ".*",
+				Hints:     []string{"Implement Hello() to return 'Hello, Go!'"},
+			}}
+			return
+		}
+		catalogData = items
+	})
+	return catalogData
 }
 
 func discoverLocal() ([]Exercise, error) {
