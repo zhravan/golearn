@@ -32,7 +32,37 @@ func catalog() []Exercise {
 	}
 }
 
+func discoverLocal() ([]Exercise, error) {
+	var items []Exercise
+	entries, err := os.ReadDir("exercises")
+	if errors.Is(err, os.ErrNotExist) {
+		return items, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+	for _, e := range entries {
+		if e.IsDir() {
+			slug := e.Name()
+			items = append(items, Exercise{
+				Slug:      slug,
+				Title:     slug,
+				TestRegex: ".*",
+				Hints:     nil,
+			})
+		}
+	}
+	return items, nil
+}
+
 func List() ([]Exercise, error) {
+	locals, err := discoverLocal()
+	if err != nil {
+		return nil, err
+	}
+	if len(locals) > 0 {
+		return locals, nil
+	}
 	return catalog(), nil
 }
 
@@ -42,12 +72,30 @@ func Get(slug string) (Exercise, error) {
 			return ex, nil
 		}
 	}
+	locals, err := discoverLocal()
+	if err != nil {
+		return Exercise{}, err
+	}
+	for _, ex := range locals {
+		if ex.Slug == slug {
+			return ex, nil
+		}
+	}
 	return Exercise{}, fmt.Errorf("exercise not found: %s", slug)
 }
 
 func Reset(ex Exercise) error {
-	// re-copy from templates over working exercises dir
+	// Only supported for built-in embedded templates
+	if !templateExists(ex.Slug) {
+		return fmt.Errorf("reset unsupported for non-embedded exercise '%s'", ex.Slug)
+	}
 	return copyExerciseTemplate(ex.Slug)
+}
+
+func templateExists(slug string) bool {
+	root := filepath.Join("templates", slug)
+	_, err := fs.Stat(templatesFS, root)
+	return err == nil
 }
 
 func InitAll() error {

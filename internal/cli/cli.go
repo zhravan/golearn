@@ -16,7 +16,7 @@ Usage:
   golearn watch               Watch files and re-run tests on change
   golearn progress            Show progress
   golearn reset [name]        Reset exercise to starter state
-  golearn init                Initialize exercises (copy templates)
+  golearn init [repo] [dir]   Initialize workspace: clone exercises repo or copy built-in templates
   golearn help                Show this help
 `
 }
@@ -56,7 +56,14 @@ func Execute(args []string) error {
 		}
 		return runReset(name)
 	case "init":
-		return runInit()
+		var repo, dir string
+		if len(args) > 1 {
+			repo = args[1]
+		}
+		if len(args) > 2 {
+			dir = args[2]
+		}
+		return runInit(repo, dir)
 	default:
 		return fmt.Errorf("unknown command: %s", args[0])
 	}

@@ -11,8 +11,8 @@ import (
 	"strings"
 	"time"
 
-	"golearn/internal/exercises"
-	"golearn/internal/progress"
+	"github.com/shravan20/golearn/internal/exercises"
+	"github.com/shravan20/golearn/internal/progress"
 )
 
 func runList() error {
@@ -151,8 +151,36 @@ func runReset(name string) error {
 	return exercises.Reset(ex)
 }
 
-func runInit() error {
-	return exercises.InitAll()
+func runInit(repo, dir string) error {
+	if strings.TrimSpace(repo) == "" {
+		return exercises.InitAll()
+	}
+
+	targetDir := strings.TrimSpace(dir)
+	if targetDir == "" {
+		// derive folder from repo, e.g. https://github.com/org/repo(.git) -> repo
+		repoPath := repo
+		if idx := strings.LastIndex(repoPath, "/"); idx >= 0 && idx < len(repoPath)-1 {
+			repoPath = repoPath[idx+1:]
+		}
+		targetDir = strings.TrimSuffix(repoPath, ".git")
+		if targetDir == "" {
+			targetDir = "golearn-exercises"
+		}
+	}
+
+	cmd := exec.Command("git", "clone", repo, targetDir)
+	cmd.Dir = projectRoot()
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("git clone failed: %w", err)
+	}
+
+	// Ensure local progress dir exists in the new workspace
+	_ = os.MkdirAll(filepath.Join(targetDir, ".golearn"), 0o755)
+	fmt.Printf("Cloned %s into %s\n", repo, targetDir)
+	return nil
 }
 
 func projectRoot() string {

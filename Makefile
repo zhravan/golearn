@@ -18,7 +18,7 @@ help:
 	@echo "Common targets:"
 	@echo "  build             Build CLI binary to $(BIN)"
 	@echo "  run ARGS=...      Run CLI via 'go run' (e.g., make run ARGS=\"list\")"
-	@echo "  init              Copy embedded templates into ./exercises"
+	@echo "  init [REPO] [DIR] Initialize workspace: clone REPO into DIR or copy built-in templates"
 	@echo "  list              List exercises"
 	@echo "  verify NAME=...   Verify an exercise (or all if NAME unset)"
 	@echo "  hint NAME=...     Show hints for an exercise"
@@ -53,7 +53,7 @@ tidy:
 	$(GO) mod tidy
 
 init:
-	$(GO) run $(PKG) init
+	$(GO) run $(PKG) init $(REPO) $(DIR)
 
 list:
 	$(GO) run $(PKG) list

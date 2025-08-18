@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"golearn/internal/cli"
+	"github.com/shravan20/golearn/internal/cli"
 )
 
 func main() {

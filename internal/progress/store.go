@@ -11,7 +11,19 @@ type state struct {
 	Completed map[string]bool `json:"completed"`
 }
 
-func stateFile() string {
+func localStateFilePath() (string, bool) {
+	cwd, err := os.Getwd()
+	if err != nil {
+		return "", false
+	}
+	root := filepath.Join(cwd, ".golearn")
+	if err := os.MkdirAll(root, 0o755); err != nil {
+		return "", false
+	}
+	return filepath.Join(root, "progress.json"), true
+}
+
+func userStateFilePath() string {
 	dir, _ := os.UserConfigDir()
 	if dir == "" {
 		dir = "."
@@ -19,6 +31,13 @@ func stateFile() string {
 	root := filepath.Join(dir, "golearn")
 	_ = os.MkdirAll(root, 0o755)
 	return filepath.Join(root, "progress.json")
+}
+
+func stateFile() string {
+	if p, ok := localStateFilePath(); ok {
+		return p
+	}
+	return userStateFilePath()
 }
 
 func load() (state, error) {

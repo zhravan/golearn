@@ -1,17 +1,47 @@
-### golearn — Rustlings-like Go learning CLI
+# GoLearn
 
-## Quickstart
+A Rustlings-like Go learning CLI.
 
-- Install Go 1.22+
-- Initialize exercises:
-  - `go run ./cmd/golearn init`
-- List:
-  - `go run ./cmd/golearn list`
-- Verify one:
-  - `go run ./cmd/golearn verify 01_hello`
-  - Edit `exercises/01_hello/hello.go` to return "Hello, Go!"
-- Show progress:
-  - `go run ./cmd/golearn progress`
+## Install
+
+Install the CLI globally (requires Go 1.22+):
+
+```
+go install github.com/shravan20/golearn/cmd/golearn@latest
+```
+
+This installs a `golearn` binary in your `$GOBIN` (typically `~/go/bin`). Ensure it is on your `PATH`.
+
+## Quick start
+
+- Initialize with embedded templates in current folder:
+
+```
+golearn init
+```
+
+- Or clone a remote exercises repository to a directory:
+
+```
+golearn init https://github.com/your-org/your-exercises my-exercises
+cd my-exercises
+```
+
+- Work through exercises:
+
+```
+golearn list
+golearn verify 01_hello
+golearn hint 01_hello
+```
+
+- Track progress:
+
+```
+golearn progress
+```
+
+Progress is stored in `.golearn/progress.json` in the current workspace when writable, otherwise in the user config directory under `golearn/progress.json`.
 
 ## Docker
 
