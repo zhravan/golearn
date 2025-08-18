@@ -1,55 +1,38 @@
 # GoLearn
 
-A Rustlings-like Go learning CLI.
+Rustlings‑style Go exercises in a tiny CLI.
 
-## Install
-
-Install the CLI globally (requires Go 1.22+):
+## Install (Go 1.22+)
 
 ```
 go install github.com/shravan20/golearn/cmd/golearn@latest
 ```
 
-This installs a `golearn` binary in your `$GOBIN` (typically `~/go/bin`). Ensure it is on your `PATH`.
-
-## Quick start
-
-- Initialize with embedded templates in current folder:
+## Use
 
 ```
+# In any folder, set up exercises here
 golearn init
-```
 
-- Or clone a remote exercises repository to a directory:
-
-```
+# Or clone a remote exercises repo
+# golearn init <repo-url> <dir>
 golearn init https://github.com/your-org/your-exercises my-exercises
 cd my-exercises
-```
 
-- Work through exercises:
-
-```
+# Learn
 golearn list
 golearn verify 01_hello
-golearn hint 01_hello
-```
-
-- Track progress:
-
-```
 golearn progress
 ```
 
-Progress is stored in `.golearn/progress.json` in the current workspace when writable, otherwise in the user config directory under `golearn/progress.json`.
+Need commands?
 
-## Docker
-
-- Build: `docker build -t golearn .`
-- Run: `docker run --rm -it -v "$PWD:/workspace" -w /workspace golearn init`
+```
+golearn help
+```
 
 ## Licensing and Attribution
 
-- Code: MIT (see `LICENSE`).
-- Non-code lesson content and any included gopher artwork: CC BY 3.0 (see `CONTENT_LICENSE`).
-- Inspired by [rust-lang/rustlings](https://github.com/rust-lang/rustlings) and [mmcgrana/gobyexample](https://github.com/mmcgrana/gobyexample). If adapting content from these sources, include the required CC BY 3.0 attribution statements as noted in `NOTICE` and `CONTENT_LICENSE`.
+- Code: [MIT](./LICENSE)
+- Non-code lesson content and any included gopher artwork: [CC BY 3.0](./CONTENT_LICENSE).
+- Inspired by rustlings and Go by Example. [NOTICE](./NOTICE) for attributions.
