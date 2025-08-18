@@ -1,0 +1,23 @@
+GoLearn - Notices and Attributions
+
+Project License: MIT (see LICENSE)
+
+Inspirations and Attributions:
+
+- Rustlings by the Rust Project Developers — MIT License
+  - Repository: https://github.com/rust-lang/rustlings
+
+- Go by Example by Mark McGranaghan — Creative Commons Attribution 3.0 Unported (CC BY 3.0)
+  - Repository: https://github.com/mmcgrana/gobyexample
+  - Required attribution statement (if content is adapted):
+    "This work is copyright Mark McGranaghan and licensed under a Creative Commons Attribution 3.0 Unported License."
+
+- The Go Gopher by Renée French — Creative Commons Attribution 3.0 Unported (CC BY 3.0)
+  - Info: https://go.dev/blog/gopher
+  - Required attribution statement (if images are used):
+    "The Go Gopher is copyright Renée French and licensed under a Creative Commons Attribution 3.0 Unported License."
+
+Notes on Licensing Scope:
+
+- All original code in this repository is provided under the MIT license.
+- Any lesson content, prose, or media adapted from Go by Example or the Go Gopher artwork is provided under CC BY 3.0. See CONTENT_LICENSE for details.
