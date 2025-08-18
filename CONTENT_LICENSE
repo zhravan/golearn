@@ -3,6 +3,7 @@ Content License (Non-code)
 Unless otherwise noted, original written lesson content in this repository is provided under the Creative Commons Attribution 3.0 Unported License (CC BY 3.0).
 
 Attribution Requirements for Adapted Content:
+
 - If content is adapted or derived from "Go by Example" by Mark McGranaghan, include:
   "This work is copyright Mark McGranaghan and licensed under a Creative Commons Attribution 3.0 Unported License."
 
@@ -12,7 +13,6 @@ Attribution Requirements for Adapted Content:
 The source code (Go and build scripts) remains licensed under the MIT license (see LICENSE).
 
 Links:
-- CC BY 3.0 license summary: https://creativecommons.org/licenses/by/3.0/
-- CC BY 3.0 legal code: https://creativecommons.org/licenses/by/3.0/legalcode
 
-
+- [CC BY 3.0 license summary](https://creativecommons.org/licenses/by/3.0/)
+- [CC BY 3.0 legal code](https://creativecommons.org/licenses/by/3.0/legalcode)
