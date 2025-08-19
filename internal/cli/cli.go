@@ -3,6 +3,8 @@ package cli
 import (
 	"errors"
 	"fmt"
+
+	"github.com/shravan20/golearn/internal/cli/theme"
 )
 
 // HelpText returns usage information for the CLI.
@@ -18,11 +20,18 @@ Usage:
   golearn reset [name]        Reset exercise to starter state
   golearn init [repo] [dir]   Initialize workspace: clone exercises repo or copy built-in templates
   golearn help                Show this help
+
+Global options:
+  --no-color                  Disable ANSI colors (honors NO_COLOR)
+  --theme=<name>              Theme: default | high-contrast | monochrome
+  --screen-reader, --sr       Optimize for screen readers; avoid screen clears
 `
 }
 
 // Execute runs the CLI with arguments.
 func Execute(args []string) error {
+	// Parse global accessibility/theming flags and envs
+	args = theme.Setup(args)
 	if len(args) == 0 {
 		fmt.Println(HelpText())
 		return nil
