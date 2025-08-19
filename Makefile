@@ -8,7 +8,7 @@ BIN_DIR := bin
 BIN := $(BIN_DIR)/golearn
 DOCKER_IMAGE := golearn:latest
 
-.PHONY: help build run tidy init list verify hint progress reset test fmt fmt-check vet check clean docker-build docker-run ci
+.PHONY: help build rebuild run tidy init list verify hint progress watch reset test fmt fmt-check vet check clean docker-build docker-run ci
 
 default: help
 
@@ -17,12 +17,14 @@ help:
 	@echo ""
 	@echo "Common targets:"
 	@echo "  build             Build CLI binary to $(BIN)"
+	@echo "  rebuild           Force rebuild the CLI binary"
 	@echo "  run ARGS=...      Run CLI via 'go run' (e.g., make run ARGS=\"list\")"
 	@echo "  init [REPO] [DIR] Initialize workspace: clone REPO into DIR or copy built-in templates"
 	@echo "  list              List exercises"
 	@echo "  verify NAME=...   Verify an exercise (or all if NAME unset)"
 	@echo "  hint NAME=...     Show hints for an exercise"
-	@echo "  progress          Show local progress"
+	@echo "  progress          Show progress dashboard with ASCII bar"
+	@echo "  watch             Watch exercises and auto-verify on changes"
 	@echo "  reset NAME=...    Reset an exercise to starter state"
 	@echo ""
 	@echo "Quality targets:"
@@ -44,7 +46,16 @@ $(BIN):
 	@mkdir -p $(BIN_DIR)
 	$(GO) build -o $(BIN) $(PKG)
 
-build: $(BIN)
+# Always build the binary when invoking 'make build'
+build:
+	@mkdir -p $(BIN_DIR)
+	$(GO) build -o $(BIN) $(PKG)
+
+# Force rebuild convenience target
+rebuild:
+	rm -f $(BIN)
+	@mkdir -p $(BIN_DIR)
+	$(GO) build -o $(BIN) $(PKG)
 
 run:
 	$(GO) run $(PKG) $(ARGS)
@@ -67,6 +78,9 @@ hint:
 
 progress:
 	$(GO) run $(PKG) progress
+
+watch:
+	$(GO) run $(PKG) watch
 
 reset:
 	@if [ -z "$(NAME)" ]; then echo "Usage: make reset NAME=<exercise-slug>"; exit 1; fi

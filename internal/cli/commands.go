@@ -7,10 +7,14 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"os/signal"
 	"path/filepath"
+	"sort"
+	"strconv"
 	"strings"
 	"time"
 
+	"github.com/fsnotify/fsnotify"
 	"github.com/shravan20/golearn/internal/exercises"
 	"github.com/shravan20/golearn/internal/progress"
 )
@@ -120,8 +124,76 @@ func runHint(name string) error {
 }
 
 func runWatch() error {
-	fmt.Println("Watch mode not yet implemented. Use your editor's file watch or rerun verify.")
-	return nil
+	root := filepath.Join(projectRoot(), "exercises")
+	if _, err := os.Stat(root); errors.Is(err, os.ErrNotExist) {
+		fmt.Println("No exercises directory found. Run 'golearn init' first or ensure exercises are present.")
+		return nil
+	}
+
+	watcher, err := fsnotify.NewWatcher()
+	if err != nil {
+		return err
+	}
+	defer watcher.Close()
+
+	if err := addWatchDirs(watcher, root); err != nil {
+		return err
+	}
+
+	fmt.Println("Watching for changes. Press Ctrl+C to stop.")
+
+	// Debounce verifications per slug
+	timers := map[string]*time.Timer{}
+	resetTimer := func(slug string) {
+		if slug == "" {
+			return
+		}
+		if t, ok := timers[slug]; ok {
+			if !t.Stop() {
+				select {
+				case <-t.C:
+				default:
+				}
+			}
+		}
+		timers[slug] = time.AfterFunc(300*time.Millisecond, func() {
+			ex, err := exercises.Get(slug)
+			if err != nil {
+				fmt.Printf("Error: %v\n", err)
+				return
+			}
+			_ = verifyOne(ex)
+		})
+	}
+
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, os.Interrupt)
+
+	for {
+		select {
+		case ev, ok := <-watcher.Events:
+			if !ok {
+				return nil
+			}
+			if ev.Op&(fsnotify.Create) != 0 {
+				fi, err := os.Stat(ev.Name)
+				if err == nil && fi.IsDir() {
+					_ = addWatchDirs(watcher, ev.Name)
+				}
+			}
+			if slug := slugFromPath(ev.Name); slug != "" {
+				resetTimer(slug)
+			}
+		case err, ok := <-watcher.Errors:
+			if !ok {
+				return nil
+			}
+			fmt.Printf("watch error: %v\n", err)
+		case <-stop:
+			fmt.Println("Stopping watch mode.")
+			return nil
+		}
+	}
 }
 
 func runProgress() error {
@@ -129,14 +201,35 @@ func runProgress() error {
 	if err != nil {
 		return err
 	}
+	sort.Slice(items, func(i, j int) bool { return items[i].Slug < items[j].Slug })
 	doneCount := 0
-	for _, ex := range items {
+	statuses := make([]bool, len(items))
+	for i, ex := range items {
 		done, _ := progress.IsCompleted(ex.Slug)
+		statuses[i] = done
 		if done {
 			doneCount++
 		}
 	}
-	fmt.Printf("Progress: %d/%d completed\n", doneCount, len(items))
+
+	// Clear screen and render dashboard
+	fmt.Print("\x1b[2J\x1b[H")
+	fmt.Println("GoLearn Progress Dashboard")
+	fmt.Println(strings.Repeat("=", 26))
+	width := progressBarWidth()
+	fmt.Printf("\nCompleted: %d/%d\n", doneCount, len(items))
+	fmt.Println(renderProgressBar(doneCount, len(items), width))
+	fmt.Println()
+	fmt.Println("Exercises:")
+	for i, ex := range items {
+		box := "[ ]"
+		if statuses[i] {
+			box = "[x]"
+		}
+		fmt.Printf(" %s %s - %s\n", box, ex.Slug, ex.Title)
+	}
+	fmt.Println()
+	fmt.Println("Tip: run 'golearn verify <slug>' to test an exercise or 'golearn watch' for auto-verify.")
 	return nil
 }
 
@@ -191,3 +284,67 @@ func projectRoot() string {
 // unused to keep future-ready; avoid linter complaints by referencing
 var _ = filepath.Join
 var _ = time.Now
+
+// addWatchDirs walks the provided directory and registers all subdirectories with the watcher.
+func addWatchDirs(w *fsnotify.Watcher, dir string) error {
+	return filepath.WalkDir(dir, func(path string, d os.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if d.IsDir() {
+			return w.Add(path)
+		}
+		return nil
+	})
+}
+
+// slugFromPath extracts the exercise slug from a path like exercises/<slug>/... .
+func slugFromPath(path string) string {
+	path = filepath.ToSlash(path)
+	idx := strings.Index(path, "exercises/")
+	if idx == -1 {
+		return ""
+	}
+	rest := path[idx+len("exercises/"):]
+	parts := strings.Split(rest, "/")
+	if len(parts) == 0 || parts[0] == "" {
+		return ""
+	}
+	return parts[0]
+}
+
+func renderProgressBar(completed, total, width int) string {
+	if total <= 0 {
+		total = 1
+	}
+	if width <= 0 {
+		width = 40
+	}
+	filled := int(float64(completed) / float64(total) * float64(width))
+	if filled > width {
+		filled = width
+	}
+	if filled < 0 {
+		filled = 0
+	}
+	bar := strings.Repeat("#", filled) + strings.Repeat("-", width-filled)
+	percent := int(float64(completed) / float64(total) * 100)
+	return fmt.Sprintf("[%s] %d%%", bar, percent)
+}
+
+func progressBarWidth() int {
+	// Try COLUMNS env var; fallback to 60, leave margin for text
+	if v := os.Getenv("COLUMNS"); v != "" {
+		if n, err := strconv.Atoi(v); err == nil && n > 10 {
+			w := n - 10
+			if w < 10 {
+				w = 10
+			}
+			if w > 80 {
+				w = 80
+			}
+			return w
+		}
+	}
+	return 60
+}
