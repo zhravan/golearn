@@ -1,0 +1,95 @@
+name: Build, tag, and release
+
+on:
+  pull_request:
+    types: [closed]
+    branches: ["main"]
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Verify build
+        run: |
+          go vet ./...
+          go build -v ./cmd/golearn
+
+      - name: Determine next version from labels
+        id: bump
+        run: |
+          labels='${{ toJson(github.event.pull_request.labels) }}'
+          lower=$(echo "$labels" | tr '[:upper:]' '[:lower:]')
+          bump="patch"
+          if echo "$lower" | grep -q '"name"\s*:\s*"major"'; then
+            bump="major"
+          elif echo "$lower" | grep -q '"name"\s*:\s*"minor"'; then
+            bump="minor"
+          fi
+          echo "bump=$bump" >> $GITHUB_OUTPUT
+
+      - name: Get latest tag
+        id: get_tag
+        run: |
+          latest=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          echo "latest=$latest" >> $GITHUB_OUTPUT
+
+      - name: Compute next tag
+        id: next
+        run: |
+          latest="${{ steps.get_tag.outputs.latest }}"
+          echo "Latest tag: $latest"
+          ver=${latest#v}
+          IFS='.' read -r major minor patch <<EOF
+          $ver
+          EOF
+          case "${{ steps.bump.outputs.bump }}" in
+            major)
+              major=$((major+1)); minor=0; patch=0;
+              ;;
+            minor)
+              minor=$((minor+1)); patch=0;
+              ;;
+            patch)
+              patch=$((patch+1));
+              ;;
+          esac
+          next="v${major}.${minor}.${patch}"
+          echo "next=$next" >> $GITHUB_OUTPUT
+
+      - name: Create tag and release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          next="${{ steps.next.outputs.next }}"
+          git tag "$next"
+          git push origin "$next"
+          gh release create "$next" --generate-notes || true
+
+      - name: Attach binaries (Linux/macOS)
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Build static binaries for common platforms
+          mkdir -p dist
+          GOOS=linux GOARCH=amd64 go build -o dist/golearn-linux-amd64 ./cmd/golearn
+          GOOS=darwin GOARCH=arm64 go build -o dist/golearn-darwin-arm64 ./cmd/golearn
+          gh release upload "${{ steps.next.outputs.next }}" dist/* --clobber
+

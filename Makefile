@@ -6,9 +6,8 @@ GO := go
 PKG := ./cmd/golearn
 BIN_DIR := bin
 BIN := $(BIN_DIR)/golearn
-DOCKER_IMAGE := golearn:latest
 
-.PHONY: help build rebuild run tidy init list verify hint progress watch reset test fmt fmt-check vet check clean docker-build docker-run ci
+.PHONY: help build rebuild run tidy init list verify hint progress watch reset test fmt fmt-check vet check clean ci
 
 default: help
 
@@ -34,10 +33,6 @@ help:
 	@echo "  vet               Run 'go vet'"
 	@echo "  test              Run all tests in ./exercises/..."
 	@echo "  check             Run fmt-check, vet, build, and tests"
-	@echo ""
-	@echo "Docker:"
-	@echo "  docker-build      Build Docker image $(DOCKER_IMAGE)"
-	@echo "  docker-run        Run image with current workspace mounted"
 	@echo ""
 	@echo "CI:"
 	@echo "  ci                Run a sensible CI pipeline"
@@ -108,12 +103,8 @@ check: fmt-check vet build test
 clean:
 	rm -rf $(BIN_DIR)
 
-docker-build:
-	docker build -t $(DOCKER_IMAGE) .
+ 
 
-docker-run:
-	docker run --rm -it -v "$$PWD:/workspace" -w /workspace $(DOCKER_IMAGE) $(ARGS)
-
-ci: tidy fmt-check vet build test docker-build
+ci: tidy fmt-check vet build test
 
 
