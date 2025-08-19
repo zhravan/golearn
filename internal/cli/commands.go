@@ -15,6 +15,7 @@ import (
 	"time"
 
 	"github.com/fsnotify/fsnotify"
+	"github.com/shravan20/golearn/internal/cli/theme"
 	"github.com/shravan20/golearn/internal/exercises"
 	"github.com/shravan20/golearn/internal/progress"
 )
@@ -24,11 +25,17 @@ func runList() error {
 	if err != nil {
 		return err
 	}
+	if h := theme.Heading("Exercises"); h != "" {
+		fmt.Println(h)
+	}
 	for _, ex := range items {
 		status := "pending"
 		done, _ := progress.IsCompleted(ex.Slug)
 		if done {
-			status = "done"
+			status = theme.Success("done")
+		}
+		if !done {
+			status = theme.Muted(status)
 		}
 		fmt.Printf("%s - %s [%s]\n", ex.Slug, ex.Title, status)
 	}
@@ -60,7 +67,7 @@ func runVerify(name string) error {
 }
 
 func verifyOne(ex exercises.Exercise) error {
-	fmt.Printf("\n==> %s: %s\n", ex.Slug, ex.Title)
+	fmt.Printf("\n%s\n", theme.Heading("==> "+ex.Slug+": "+ex.Title))
 
 	cmd := exec.Command("go", "test", "-run", ex.TestRegex, "-json", "./exercises/"+ex.Slug)
 	cmd.Env = append(os.Environ(), "GOFLAGS=-count=1")
@@ -72,10 +79,10 @@ func verifyOne(ex exercises.Exercise) error {
 
 	if err == nil {
 		_ = progress.MarkCompleted(ex.Slug)
-		fmt.Printf("PASSED %s\n", ex.Slug)
+		fmt.Printf("%s %s\n", theme.Success("PASSED"), ex.Slug)
 		return nil
 	}
-	fmt.Printf("FAILED %s\n", ex.Slug)
+	fmt.Printf("%s %s\n", theme.Error("FAILED"), ex.Slug)
 	return err
 }
 
@@ -94,7 +101,7 @@ func parseAndDisplayJSON(out []byte) {
 					fmt.Print(line)
 				}
 				if hint := hintFromCompiler(line); hint != "" {
-					fmt.Print(hint)
+					fmt.Print(theme.Hint(hint))
 				}
 			}
 		}
@@ -118,7 +125,7 @@ func runHint(name string) error {
 		return err
 	}
 	for i, h := range ex.Hints {
-		fmt.Printf("%d) %s\n", i+1, h)
+		fmt.Printf("%d) %s\n", i+1, theme.Hint(h))
 	}
 	return nil
 }
@@ -140,7 +147,7 @@ func runWatch() error {
 		return err
 	}
 
-	fmt.Println("Watching for changes. Press Ctrl+C to stop.")
+	fmt.Println(theme.Muted("Watching for changes. Press Ctrl+C to stop."))
 
 	// Debounce verifications per slug
 	timers := map[string]*time.Timer{}
@@ -188,9 +195,9 @@ func runWatch() error {
 			if !ok {
 				return nil
 			}
-			fmt.Printf("watch error: %v\n", err)
+			fmt.Printf("%s %v\n", theme.Error("watch error:"), err)
 		case <-stop:
-			fmt.Println("Stopping watch mode.")
+			fmt.Println(theme.Muted("Stopping watch mode."))
 			return nil
 		}
 	}
@@ -212,24 +219,26 @@ func runProgress() error {
 		}
 	}
 
-	// Clear screen and render dashboard
-	fmt.Print("\x1b[2J\x1b[H")
-	fmt.Println("GoLearn Progress Dashboard")
+	// Clear screen only when appropriate and render dashboard
+	if theme.MaybeClearScreen() {
+		// cleared
+	}
+	fmt.Println(theme.Heading("GoLearn Progress Dashboard"))
 	fmt.Println(strings.Repeat("=", 26))
 	width := progressBarWidth()
 	fmt.Printf("\nCompleted: %d/%d\n", doneCount, len(items))
 	fmt.Println(renderProgressBar(doneCount, len(items), width))
 	fmt.Println()
-	fmt.Println("Exercises:")
+	fmt.Println(theme.Emph("Exercises:"))
 	for i, ex := range items {
 		box := "[ ]"
 		if statuses[i] {
-			box = "[x]"
+			box = theme.Success("[x]")
 		}
 		fmt.Printf(" %s %s - %s\n", box, ex.Slug, ex.Title)
 	}
 	fmt.Println()
-	fmt.Println("Tip: run 'golearn verify <slug>' to test an exercise or 'golearn watch' for auto-verify.")
+	fmt.Println(theme.Muted("Tip: run 'golearn verify <slug>' to test an exercise or 'golearn watch' for auto-verify."))
 	return nil
 }
 
