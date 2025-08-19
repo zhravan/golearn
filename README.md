@@ -26,7 +26,10 @@ cd my-exercises
 # Learn
 golearn list
 golearn verify 01_hello
-golearn progress
+golearn progress    # Rich TUI with ASCII progress bar and checklist
+
+# Auto-verify on change (watch mode)
+golearn watch       # Watches ./exercises and re-runs tests per edited exercise
 ```
 
 Need commands?
@@ -34,6 +37,24 @@ Need commands?
 ```bash
 golearn help
 ```
+
+## Makefile shortcuts
+
+```bash
+# Show help
+make
+
+# Run commands
+make list
+make verify NAME=01_hello
+make progress
+make watch
+```
+
+## Tips
+
+- The progress bar adapts to terminal width via the `COLUMNS` env var.
+- Press Ctrl+C to stop watch mode.
 
 ## Licensing and Attribution
 
