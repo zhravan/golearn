@@ -4,6 +4,7 @@ go 1.22.0
 
 require (
 	github.com/fsnotify/fsnotify v1.7.0
+	github.com/stretchr/testify v1.11.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
