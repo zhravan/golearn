@@ -10,7 +10,7 @@ func sumSlice(s []int) int {
 
 func countMap(m map[string]int) int {
 	count := 0
-	for range m {
+	for _, _ = range m {
 		count++
 	}
 	return count
