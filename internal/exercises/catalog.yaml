@@ -63,4 +63,74 @@
   test_regex: ".*"
   hints:
     - Use '...' to accept any number of ints and sum them.
+- slug: 14_closures
+  title: Closures
+  test_regex: ".*"
+  hints:
+    - Implement a function that returns a closure, capturing an outer variable.
+- slug: 15_recursion
+  title: Recursion
+  test_regex: ".*"
+  hints:
+    - Implement a recursive factorial function.
+- slug: 16_range_built_in
+  title: Range over Built-in Types
+  test_regex: ".*"
+  hints:
+    - Use range to iterate over a slice and a map.
+- slug: 17_pointers
+  title: Pointers
+  test_regex: ".*"
+  hints:
+    - Write a function that takes a pointer, modifies the value, and returns the pointer.
+- slug: 18_strings_runes
+  title: Strings and Runes
+  test_regex: ".*"
+  hints:
+    - Iterate over a string with range to count runes, and demonstrate string manipulation.
+- slug: 19_structs
+  title: Structs
+  test_regex: ".*"
+  hints:
+    - Define a struct with fields for name and age, then create an instance.
+- slug: 20_methods
+  title: Methods
+  test_regex: ".*"
+  hints:
+    - Add a method to a struct that calculates something based on its fields.
+- slug: 21_interfaces
+  title: Interfaces
+  test_regex: ".*"
+  hints:
+    - Define an interface and implement it for a struct.
+- slug: 22_enums
+  title: Enums
+  test_regex: ".*"
+  hints:
+    - Use iota to create a set of related constants as an enumeration.
+- slug: 23_struct_embedding
+  title: Struct Embedding
+  test_regex: ".*"
+  hints:
+    - Embed one struct within another and access the inner struct's fields directly.
+- slug: 24_generics
+  title: Generics
+  test_regex: ".*"
+  hints:
+    - Write a generic function that works with different types.
+- slug: 25_range_iterators
+  title: Range over Iterators
+  test_regex: ".*"
+  hints:
+    - Implement a custom iterator and use range over it.
+- slug: 26_errors
+  title: Errors
+  test_regex: ".*"
+  hints:
+    - Write a function that returns an error and handle it.
+- slug: 27_custom_errors
+  title: Custom Errors
+  test_regex: ".*"
+  hints:
+    - Define a custom error type and return it from a function.
 
