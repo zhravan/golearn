@@ -25,35 +25,44 @@ type Exercise struct {
 	Hints     []string `yaml:"hints"`
 }
 
+type Catalog struct {
+	Concepts []Exercise `yaml:"concepts"`
+	Projects []Exercise `yaml:"projects"`
+}
+
 var (
 	catalogOnce sync.Once
-	catalogData []Exercise
+	catalogData Catalog
 )
 
-func catalog() []Exercise {
+func catalog() Catalog {
 	catalogOnce.Do(func() {
 		b, err := catalogFS.ReadFile("catalog.yaml")
 		if err != nil {
 			// Fallback minimal catalog
-			catalogData = []Exercise{{
-				Slug:      "01_hello",
-				Title:     "Hello, Go!",
-				TestRegex: ".*",
-				Hints:     []string{"Implement Hello() to return 'Hello, Go!'"},
-			}}
+			catalogData = Catalog{
+				Concepts: []Exercise{{
+					Slug:      "01_hello",
+					Title:     "Hello, Go!",
+					TestRegex: ".*",
+					Hints:     []string{"Implement Hello() to return 'Hello, Go!'"},
+				}},
+			}
 			return
 		}
-		var items []Exercise
-		if err := yaml.Unmarshal(b, &items); err != nil || len(items) == 0 {
-			catalogData = []Exercise{{
-				Slug:      "01_hello",
-				Title:     "Hello, Go!",
-				TestRegex: ".*",
-				Hints:     []string{"Implement Hello() to return 'Hello, Go!'"},
-			}}
+		var cat Catalog
+		if err := yaml.Unmarshal(b, &cat); err != nil {
+			catalogData = Catalog{
+				Concepts: []Exercise{{
+					Slug:      "01_hello",
+					Title:     "Hello, Go!",
+					TestRegex: ".*",
+					Hints:     []string{"Implement Hello() to return 'Hello, Go!'"},
+				}},
+			}
 			return
 		}
-		catalogData = items
+		catalogData = cat
 	})
 	return catalogData
 }
@@ -81,21 +90,29 @@ func discoverLocal() ([]Exercise, error) {
 	return items, nil
 }
 
-func List() ([]Exercise, error) {
+func ListAll() (Catalog, error) {
 	locals, err := discoverLocal()
 	if err != nil {
-		return nil, err
+		return Catalog{}, err
 	}
+
 	if len(locals) > 0 {
-		return locals, nil
+		// For simplicity, if local exercises are present, we'll only return them for now.
+		// A more robust solution might merge local and catalog exercises.
+		return Catalog{Concepts: locals}, nil
 	}
 	return catalog(), nil
 }
 
 func Get(slug string) (Exercise, error) {
-	for _, ex := range catalog() {
+	for _, ex := range catalog().Concepts {
 		if ex.Slug == slug {
 			return ex, nil
+		}
+	}
+	for _, ex := range catalog().Projects {
+		if ex.Slug == slug {
+			return ex, nil	
 		}
 	}
 	locals, err := discoverLocal()
@@ -125,7 +142,12 @@ func templateExists(slug string) bool {
 }
 
 func InitAll() error {
-	for _, ex := range catalog() {
+	for _, ex := range catalog().Concepts {
+		if err := copyExerciseTemplate(ex.Slug); err != nil {
+			return err
+		}
+	}
+	for _, ex := range catalog().Projects {
 		if err := copyExerciseTemplate(ex.Slug); err != nil {
 			return err
 		}
