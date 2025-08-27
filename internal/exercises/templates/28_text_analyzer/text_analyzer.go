@@ -22,3 +22,4 @@ func CountUniqueWords(text string) int {
 	}
 	return len(uniqueWords)
 }
+
