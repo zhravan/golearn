@@ -1,22 +1,14 @@
 package errors
 
-import (
-	"errors"
-	"fmt"
-)
+// TODO:
+// - Implement divide to return a result and an error for division by zero.
+// - Implement processDivision to print result or error accordingly.
 
 func divide(a, b int) (int, error) {
-	if b == 0 {
-		return 0, errors.New("division by zero")
-	}
-	return a / b, nil
+    // TODO: return an error when b == 0
+    return 0, nil
 }
 
 func processDivision(a, b int) {
-	res, err := divide(a, b)
-	if err != nil {
-		fmt.Printf("Error: %v\n", err)
-		return
-	}
-	fmt.Printf("Result: %d\n", res)
+    // TODO: call divide and print an error or the result
 }

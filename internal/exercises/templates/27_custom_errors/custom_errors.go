@@ -1,21 +1,25 @@
 package custom_errors
 
 import (
-	"fmt"
+    "fmt"
 )
 
+// TODO:
+// - Define a custom error type that implements the error interface.
+// - Include a Code and Message, and format them in Error().
+// - Implement processInput to return an error for invalid input (negative).
+
 type MyError struct {
-	Code    int
-	Message string
+    Code    int
+    Message string
 }
 
 func (e *MyError) Error() string {
-	return fmt.Sprintf("Error Code %d: %s", e.Code, e.Message)
+    // TODO: format the error message
+    return ""
 }
 
 func processInput(input int) (string, *MyError) {
-	if input < 0 {
-		return "", &MyError{Code: 1001, Message: "Input cannot be negative"}
-	}
-	return "Processing complete", nil
+    // TODO: return an error for negative input, otherwise success
+    return "", nil
 }

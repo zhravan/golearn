@@ -21,14 +21,15 @@ import (
 )
 
 func runList() error {
-	items, err := exercises.List()
+	cat, err := exercises.ListAll()
 	if err != nil {
 		return err
 	}
-	if h := theme.Heading("Exercises"); h != "" {
+
+	if h := theme.Heading("Concepts"); h != "" {
 		fmt.Println(h)
 	}
-	for _, ex := range items {
+	for _, ex := range cat.Concepts {
 		status := "pending"
 		done, _ := progress.IsCompleted(ex.Slug)
 		if done {
@@ -39,6 +40,22 @@ func runList() error {
 		}
 		fmt.Printf("%s - %s [%s]\n", ex.Slug, ex.Title, status)
 	}
+
+	if h := theme.Heading("Projects"); h != "" {
+		fmt.Println(h)
+	}
+	for _, ex := range cat.Projects {
+		status := "pending"
+		done, _ := progress.IsCompleted(ex.Slug)
+		if done {
+			status = theme.Success("done")
+		}
+		if !done {
+			status = theme.Muted(status)
+		}
+		fmt.Printf("%s - %s [%s]\n", ex.Slug, ex.Title, status)
+	}
+
 	return nil
 }
 
@@ -50,12 +67,18 @@ func runVerify(name string) error {
 		}
 		return verifyOne(ex)
 	}
-	items, err := exercises.List()
+
+	cat, err := exercises.ListAll()
 	if err != nil {
 		return err
 	}
+
+	var allExercises []exercises.Exercise
+	allExercises = append(allExercises, cat.Concepts...)
+	allExercises = append(allExercises, cat.Projects...)
+
 	var anyFailed bool
-	for _, ex := range items {
+	for _, ex := range allExercises {
 		if err := verifyOne(ex); err != nil {
 			anyFailed = true
 		}
@@ -204,14 +227,19 @@ func runWatch() error {
 }
 
 func runProgress() error {
-	items, err := exercises.List()
+	cat, err := exercises.ListAll()
 	if err != nil {
 		return err
 	}
-	sort.Slice(items, func(i, j int) bool { return items[i].Slug < items[j].Slug })
+
+	var allExercises []exercises.Exercise
+	allExercises = append(allExercises, cat.Concepts...)
+	allExercises = append(allExercises, cat.Projects...)
+
+	sort.Slice(allExercises, func(i, j int) bool { return allExercises[i].Slug < allExercises[j].Slug })
 	doneCount := 0
-	statuses := make([]bool, len(items))
-	for i, ex := range items {
+	statuses := make([]bool, len(allExercises))
+	for i, ex := range allExercises {
 		done, _ := progress.IsCompleted(ex.Slug)
 		statuses[i] = done
 		if done {
@@ -226,13 +254,24 @@ func runProgress() error {
 	fmt.Println(theme.Heading("GoLearn Progress Dashboard"))
 	fmt.Println(strings.Repeat("=", 26))
 	width := progressBarWidth()
-	fmt.Printf("\nCompleted: %d/%d\n", doneCount, len(items))
-	fmt.Println(renderProgressBar(doneCount, len(items), width))
+	fmt.Printf("\nCompleted: %d/%d\n", doneCount, len(allExercises))
+	fmt.Println(renderProgressBar(doneCount, len(allExercises), width))
 	fmt.Println()
-	fmt.Println(theme.Emph("Exercises:"))
-	for i, ex := range items {
+	fmt.Println(theme.Emph("Concepts:"))
+	for _, ex := range cat.Concepts {
 		box := "[ ]"
-		if statuses[i] {
+		done, _ := progress.IsCompleted(ex.Slug)
+		if done {
+			box = theme.Success("[x]")
+		}
+		fmt.Printf(" %s %s - %s\n", box, ex.Slug, ex.Title)
+	}
+	fmt.Println()
+	fmt.Println(theme.Emph("Projects:"))
+	for _, ex := range cat.Projects {
+		box := "[ ]"
+		done, _ := progress.IsCompleted(ex.Slug)
+		if done {
 			box = theme.Success("[x]")
 		}
 		fmt.Printf(" %s %s - %s\n", box, ex.Slug, ex.Title)

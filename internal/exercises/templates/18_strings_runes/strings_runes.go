@@ -1,15 +1,16 @@
 package strings_runes
 
-import "unicode/utf8"
+// TODO:
+// - countRunes: return the number of runes (Unicode code points) in a string.
+// - reverseString: reverse a string by rune, preserving multi-byte characters.
+// - Do not reverse by byte; convert to []rune and swap.
 
 func countRunes(s string) int {
-	return utf8.RuneCountInString(s)
+    // TODO: implement using utf8.RuneCountInString
+    return 0
 }
 
 func reverseString(s string) string {
-	runes := []rune(s)
-	for i, j := 0, len(runes)-1; i < j; i, j = i+1, j-1 {
-		runes[i], runes[j] = runes[j], runes[i]
-	}
-	return string(runes)
+    // TODO: implement by converting to []rune and swapping
+    return ""
 }

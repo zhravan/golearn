@@ -1,14 +1,19 @@
 package methods
 
+// TODO:
+// - Add methods to a struct type.
+// - Area should be a value-receiver method returning width*height.
+// - Scale should be a pointer-receiver method that multiplies both fields.
+
 type Rectangle struct {
-	Width, Height int
+    Width, Height int
 }
 
 func (r Rectangle) Area() int {
-	return r.Width * r.Height
+	// TODO: compute area
+	return 0
 }
 
 func (r *Rectangle) Scale(factor int) {
-	r.Width *= factor
-	r.Height *= factor
+	// TODO: scale the rectangle in place
 }
