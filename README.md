@@ -1,6 +1,8 @@
-# GoLearn
-
-Rustlings‑style Go exercises in a tiny CLI.
+<p align="center">
+    <img align="center" width="20%" src="https://dev-to-uploads.s3.amazonaws.com/uploads/articles/93hg76euzrulrc59x36s.png" alt="logo"/>
+    <h1 align="center">GoLearn</h1>
+    <h6 align="center">Rustlings‑style Go exercises in a tiny CLI.</h6>
+</p>
 
 ## Why this exists
 
@@ -62,4 +64,6 @@ make watch
 - Non-code lesson content and any included gopher artwork: [CC BY 3.0](./CONTENT_LICENSE).
 - Inspired by rustlings and Go by Example. [NOTICE](./NOTICE) for attributions.
 
-Built with love for learning and knowledge sharing.
+<div align="center">
+    <img src="https://img.shields.io/badge/Built%20with%20%E2%9D%A4%EF%B8%8F-for%20learning%20and%20knowledge%20sharing-blueviolet"/>
+</div>
