@@ -4,17 +4,17 @@
     <h6 align="center">Rustlings‑style Go exercises in a tiny CLI.</h6>
 </p>
 
-## Why this exists
+### Why this exists
 
 This project is my attempt to learn Go by building as I learn, making the journey more engaging while exploring the language in practice. I'm sharing the exercises and tooling so others can learn alongside me.
 
-## Install (Go 1.22+)
+### Install (Go 1.22+)
 
 ```bash
 go install github.com/shravan20/golearn/cmd/golearn@latest
 ```
 
-## Use
+### Use
 
 ```bash
 # In any folder, set up exercises here
@@ -53,12 +53,12 @@ make progress
 make watch
 ```
 
-## Tips
+### Tips
 
 - The progress bar adapts to terminal width via the `COLUMNS` env var.
 - Press Ctrl+C to stop watch mode.
 
-## Licensing and Attribution
+### Licensing and Attribution
 
 - Code: [MIT](./LICENSE)
 - Non-code lesson content and any included gopher artwork: [CC BY 3.0](./CONTENT_LICENSE).
