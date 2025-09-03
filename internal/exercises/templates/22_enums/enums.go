@@ -1,5 +1,9 @@
 package enums
 
+// TODO:
+// - Create an enum-like type using iota for days of the week.
+// - Implement IsWeekend to return true for Saturday and Sunday.
+
 type Day int
 
 const (
@@ -13,5 +17,6 @@ const (
 )
 
 func IsWeekend(d Day) bool {
-	return d == Sunday || d == Saturday
+    // TODO: return true for Saturday or Sunday
+    return false
 }

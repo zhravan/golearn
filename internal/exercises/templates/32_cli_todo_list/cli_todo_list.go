@@ -1,17 +1,16 @@
 package cli_todo_list
 
-import (
-	"encoding/json"
-	"errors"
-	"fmt"
-	"io/ioutil"
-	"os"
-)
+// TODO:
+// - Implement a simple JSON-backed todo list:
+//   - NewTodoList: initialize with filepath and nextID starting at 1.
+//   - Load/Save: read/write the list in JSON; handle missing/empty file gracefully.
+//   - Add: append a new todo with incrementing ID.
+//   - Complete: mark a todo as complete by ID or return an error if missing.
 
 type Todo struct {
-	ID       int    `json:"id"`
-	Task     string `json:"task"`
-	Complete bool   `json:"complete"`
+    ID       int    `json:"id"`
+    Task     string `json:"task"`
+    Complete bool   `json:"complete"`
 }
 
 type TodoList struct {
@@ -21,66 +20,26 @@ type TodoList struct {
 }
 
 func NewTodoList(filepath string) *TodoList {
-	return &TodoList{
-		Todos:    []Todo{},
-		nextID:   1,
-		filepath: filepath,
-	}
+    // TODO: initialize todo list with filepath and nextID starting at 1
+    return &TodoList{}
 }
 
 func (tl *TodoList) Load() error {
-	if _, err := os.Stat(tl.filepath); errors.Is(err, os.ErrNotExist) {
-		return nil // File does not exist, start with empty list
-	}
-
-	data, err := ioutil.ReadFile(tl.filepath)
-	if err != nil {
-		return fmt.Errorf("failed to read todo file: %w", err)
-	}
-
-	if len(data) == 0 {
-		return nil // Empty file, no todos
-	}
-
-	if err := json.Unmarshal(data, &tl.Todos); err != nil {
-		return fmt.Errorf("failed to unmarshal todos: %w", err)
-	}
-	// Find max ID to set nextID correctly
-	for _, todo := range tl.Todos {
-		if todo.ID >= tl.nextID {
-			tl.nextID = todo.ID + 1
-		}
-	}
-	return nil
+    // TODO: load todos from JSON file if present
+    return nil
 }
 
 func (tl *TodoList) Save() error {
-	data, err := json.MarshalIndent(tl.Todos, "", "  ")
-	if err != nil {
-		return fmt.Errorf("failed to marshal todos: %w", err)
-	}
-
-	return ioutil.WriteFile(tl.filepath, data, 0644)
+    // TODO: save todos to JSON file
+    return nil
 }
 
 func (tl *TodoList) Add(task string) *Todo {
-	todo := Todo{
-		ID:       tl.nextID,
-		Task:     task,
-		Complete: false,
-	}
-	tl.Todos = append(tl.Todos, todo)
-	tl.nextID++
-	return &todo
+    // TODO: append a new todo and increment nextID
+    return nil
 }
 
 func (tl *TodoList) Complete(id int) error {
-	for i := range tl.Todos {
-		if tl.Todos[i].ID == id {
-			tl.Todos[i].Complete = true
-			return nil
-		}
-	}
-	return fmt.Errorf("todo with ID %d not found", id)
+    // TODO: mark todo as complete by ID or return error
+    return nil
 }
-

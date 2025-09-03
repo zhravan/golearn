@@ -1,30 +1,25 @@
 package range_iterators
 
+// TODO:
+// - Build a simple integer iterator type with Next() (val, ok).
+// - Provide a constructor to set start/end.
+// - Implement IterateInts to apply a callback across the iterator range.
+
 type IntIterator struct {
-	current int
-	end     int
+    current int
+    end     int
 }
 
 func NewIntIterator(start, end int) *IntIterator {
-	return &IntIterator{current: start, end: end}
+    // TODO: initialize iterator state
+    return &IntIterator{}
 }
 
 func (it *IntIterator) Next() (int, bool) {
-	if it.current < it.end {
-		val := it.current
-		it.current++
-		return val, true
-	}
-	return 0, false
+    // TODO: return next value while current < end
+    return 0, false
 }
 
 func IterateInts(start, end int, fn func(int)) {
-	it := NewIntIterator(start, end)
-	for {
-		val, ok := it.Next()
-		if !ok {
-			break
-		}
-		fn(val)
-	}
+    // TODO: iterate using the iterator and call fn on each value
 }

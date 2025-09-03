@@ -1,24 +1,26 @@
 package interfaces
 
-import "fmt"
+// TODO:
+// - Define an interface with a Greet() string method.
+// - Implement the interface on a Person type.
+// - Implement SayHello to accept a Greeter and return its greeting.
+// - main demonstrates usage; do not change signatures used in tests.
 
 type Greeter interface {
-	Greet() string
+    Greet() string
 }
 
 type Person struct {
-	Name string
+    Name string
 }
 
 func (p Person) Greet() string {
-	return "Hello, my name is " + p.Name
+    // TODO: return a greeting that uses p.Name
+    return ""
 }
 
 func SayHello(g Greeter) string {
-	return g.Greet()
+    // TODO: forward the greeting from the Greeter
+    return ""
 }
-
-func main() {
-	p := Person{Name: "Alice"}
-	fmt.Println(SayHello(p))
-}
+// (no main in skeleton)

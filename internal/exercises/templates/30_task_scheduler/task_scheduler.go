@@ -1,9 +1,16 @@
 package task_scheduler
 
 import (
-	"fmt"
-	"time"
+    "time"
 )
+
+// TODO:
+// - Build a simple in-memory task scheduler:
+//   - AddTask: validate input and schedule a task with an auto-increment ID.
+//   - GetTask: fetch by ID or return a typed error when missing.
+//   - Iterator: provide Next() to walk scheduled tasks.
+//   - RunScheduledTasks: execute tasks scheduled before now.
+// - Keep signatures; tests assert error codes/messages and iteration behavior.
 
 type Task struct {
 	ID        int
@@ -13,49 +20,33 @@ type Task struct {
 }
 
 type SchedulerError struct {
-	Code    int
-	Message string
+    Code    int
+    Message string
 }
 
 func (e *SchedulerError) Error() string {
-	return fmt.Sprintf("Scheduler Error %d: %s", e.Code, e.Message)
+    // TODO: format error text
+    return ""
 }
 
 type TaskScheduler struct {
-	tasks  []*Task
-	nextID int
+    tasks  []*Task
+    nextID int
 }
 
 func NewTaskScheduler() *TaskScheduler {
-	return &TaskScheduler{
-		tasks:  make([]*Task, 0),
-		nextID: 1,
-	}
+    // TODO: initialize scheduler state
+    return &TaskScheduler{}
 }
 
 func (ts *TaskScheduler) AddTask(name string, scheduled time.Time, execFn func()) (*Task, *SchedulerError) {
-	if name == "" {
-		return nil, &SchedulerError{Code: 1, Message: "Task name cannot be empty"}
-	}
-
-	task := &Task{
-		ID:        ts.nextID,
-		Name:      name,
-		Scheduled: scheduled,
-		Execute:   execFn,
-	}
-	ts.tasks = append(ts.tasks, task)
-	ts.nextID++
-	return task, nil
+    // TODO: validate and append to scheduler
+    return nil, nil
 }
 
 func (ts *TaskScheduler) GetTask(id int) (*Task, *SchedulerError) {
-	for _, task := range ts.tasks {
-		if task.ID == id {
-			return task, nil
-		}
-	}
-	return nil, &SchedulerError{Code: 2, Message: fmt.Sprintf("Task with ID %d not found", id)}
+    // TODO: find task by ID or return error
+    return nil, nil
 }
 
 type TaskIterator struct {
@@ -64,25 +55,15 @@ type TaskIterator struct {
 }
 
 func (ts *TaskScheduler) Iterator() *TaskIterator {
-	return &TaskIterator{scheduler: ts, currentIndex: 0}
+    // TODO: return an iterator over tasks
+    return &TaskIterator{}
 }
 
 func (it *TaskIterator) Next() (*Task, bool) {
-	if it.currentIndex < len(it.scheduler.tasks) {
-		task := it.scheduler.tasks[it.currentIndex]
-		it.currentIndex++
-		return task, true
-	}
-	return nil, false
+    // TODO: return next task if available
+    return nil, false
 }
 
 func (ts *TaskScheduler) RunScheduledTasks() {
-	now := time.Now()
-	for _, task := range ts.tasks {
-		if task.Scheduled.Before(now) {
-			fmt.Printf("Executing task %s (ID: %d) at %s\n", task.Name, task.ID, now.Format(time.RFC3339))
-			task.Execute()
-		}
-	}
+    // TODO: execute scheduled tasks
 }
-
