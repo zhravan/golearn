@@ -1,8 +1,5 @@
 package custom_errors
 
-import (
-	"fmt"
-)
 
 // TODO:
 // - Define a custom error type that implements the error interface.
