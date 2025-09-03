@@ -15,6 +15,7 @@ func (e *MyError) Error() string {
 	return ""
 }
 
+
 func processInput(input int) (string, *MyError) {
 	// TODO: return an error for negative input, otherwise success
 	return "", nil
