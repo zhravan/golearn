@@ -1,6 +1,5 @@
 package custom_errors
 
-
 // TODO:
 // - Define a custom error type that implements the error interface.
 // - Include a Code and Message, and format them in Error().
