@@ -1,8 +1,8 @@
 package simple_chat_app
 
 import (
-    "net"
-    "sync"
+	"net"
+	"sync"
 )
 
 // TODO:
@@ -27,28 +27,28 @@ type Server struct {
 }
 
 func NewServer() *Server {
-    // TODO: initialize server state
-    return &Server{}
+	// TODO: initialize server state
+	return &Server{}
 }
 
 func (s *Server) Start(port string) error {
-    // TODO: start listening and accept connections
-    return nil
+	// TODO: start listening and accept connections
+	return nil
 }
 
 func (s *Server) Stop() error {
-    // TODO: stop the server/listener
-    return nil
+	// TODO: stop the server/listener
+	return nil
 }
 
 func (s *Server) acceptConnections() {
-    // TODO: accept and register clients
+	// TODO: accept and register clients
 }
 
 func (c *Client) handleConnection() {
-    // TODO: read messages from the client and broadcast
+	// TODO: read messages from the client and broadcast
 }
 
 func (s *Server) Broadcast(sender *Client, message string) {
-    // TODO: broadcast message to other clients
+	// TODO: broadcast message to other clients
 }

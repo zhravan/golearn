@@ -6,7 +6,7 @@ package methods
 // - Scale should be a pointer-receiver method that multiplies both fields.
 
 type Rectangle struct {
-    Width, Height int
+	Width, Height int
 }
 
 func (r Rectangle) Area() int {

@@ -81,4 +81,3 @@ func TestClientConnectionAndBroadcast(t *testing.T) {
 		t.Errorf("Client 1 received unexpected message: got %q, want prefix %q", received1, expected1Prefix)
 	}
 }
-

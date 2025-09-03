@@ -7,20 +7,21 @@ package interfaces
 // - main demonstrates usage; do not change signatures used in tests.
 
 type Greeter interface {
-    Greet() string
+	Greet() string
 }
 
 type Person struct {
-    Name string
+	Name string
 }
 
 func (p Person) Greet() string {
-    // TODO: return a greeting that uses p.Name
-    return ""
+	// TODO: return a greeting that uses p.Name
+	return ""
 }
 
 func SayHello(g Greeter) string {
-    // TODO: forward the greeting from the Greeter
-    return ""
+	// TODO: forward the greeting from the Greeter
+	return ""
 }
+
 // (no main in skeleton)

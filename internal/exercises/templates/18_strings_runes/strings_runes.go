@@ -6,11 +6,11 @@ package strings_runes
 // - Do not reverse by byte; convert to []rune and swap.
 
 func countRunes(s string) int {
-    // TODO: implement using utf8.RuneCountInString
-    return 0
+	// TODO: implement using utf8.RuneCountInString
+	return 0
 }
 
 func reverseString(s string) string {
-    // TODO: implement by converting to []rune and swapping
-    return ""
+	// TODO: implement by converting to []rune and swapping
+	return ""
 }

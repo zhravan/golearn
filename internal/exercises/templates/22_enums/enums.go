@@ -17,6 +17,6 @@ const (
 )
 
 func IsWeekend(d Day) bool {
-    // TODO: return true for Saturday or Sunday
-    return false
+	// TODO: return true for Saturday or Sunday
+	return false
 }

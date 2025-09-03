@@ -5,8 +5,8 @@ package structs
 // - Implement a constructor-like function NewPerson(name, age) that returns a Person.
 
 type Person struct {
-    Name string
-    Age  int
+	Name string
+	Age  int
 }
 
 func NewPerson(name string, age int) Person {

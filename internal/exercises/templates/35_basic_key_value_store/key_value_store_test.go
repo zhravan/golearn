@@ -96,4 +96,3 @@ func TestLoadAndSave(t *testing.T) {
 		t.Errorf("Expected 'USA', got %q, error: %v", val, err)
 	}
 }
-

@@ -1,7 +1,7 @@
 package image_processing_utility
 
 import (
-    "image"
+	"image"
 )
 
 // TODO:
@@ -12,12 +12,12 @@ import (
 
 // Grayscale converts an image to grayscale.
 func Grayscale(img image.Image) *image.Gray {
-    // TODO: convert img to grayscale and return *image.Gray
-    return nil
+	// TODO: convert img to grayscale and return *image.Gray
+	return nil
 }
 
 // Invert inverts the colors of an image.
 func Invert(img image.Image) *image.RGBA {
-    // TODO: invert colors and return *image.RGBA
-    return nil
+	// TODO: invert colors and return *image.RGBA
+	return nil
 }

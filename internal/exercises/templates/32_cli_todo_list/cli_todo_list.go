@@ -8,9 +8,9 @@ package cli_todo_list
 //   - Complete: mark a todo as complete by ID or return an error if missing.
 
 type Todo struct {
-    ID       int    `json:"id"`
-    Task     string `json:"task"`
-    Complete bool   `json:"complete"`
+	ID       int    `json:"id"`
+	Task     string `json:"task"`
+	Complete bool   `json:"complete"`
 }
 
 type TodoList struct {
@@ -20,26 +20,26 @@ type TodoList struct {
 }
 
 func NewTodoList(filepath string) *TodoList {
-    // TODO: initialize todo list with filepath and nextID starting at 1
-    return &TodoList{}
+	// TODO: initialize todo list with filepath and nextID starting at 1
+	return &TodoList{}
 }
 
 func (tl *TodoList) Load() error {
-    // TODO: load todos from JSON file if present
-    return nil
+	// TODO: load todos from JSON file if present
+	return nil
 }
 
 func (tl *TodoList) Save() error {
-    // TODO: save todos to JSON file
-    return nil
+	// TODO: save todos to JSON file
+	return nil
 }
 
 func (tl *TodoList) Add(task string) *Todo {
-    // TODO: append a new todo and increment nextID
-    return nil
+	// TODO: append a new todo and increment nextID
+	return nil
 }
 
 func (tl *TodoList) Complete(id int) error {
-    // TODO: mark todo as complete by ID or return error
-    return nil
+	// TODO: mark todo as complete by ID or return error
+	return nil
 }

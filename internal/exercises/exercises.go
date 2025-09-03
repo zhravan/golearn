@@ -112,7 +112,7 @@ func Get(slug string) (Exercise, error) {
 	}
 	for _, ex := range catalog().Projects {
 		if ex.Slug == slug {
-			return ex, nil	
+			return ex, nil
 		}
 	}
 	locals, err := discoverLocal()

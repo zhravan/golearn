@@ -76,4 +76,3 @@ func TestLoadAndSave(t *testing.T) {
 		t.Errorf("Loaded todos do not match saved state")
 	}
 }
-

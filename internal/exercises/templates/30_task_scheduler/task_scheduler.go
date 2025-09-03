@@ -1,7 +1,7 @@
 package task_scheduler
 
 import (
-    "time"
+	"time"
 )
 
 // TODO:
@@ -20,33 +20,33 @@ type Task struct {
 }
 
 type SchedulerError struct {
-    Code    int
-    Message string
+	Code    int
+	Message string
 }
 
 func (e *SchedulerError) Error() string {
-    // TODO: format error text
-    return ""
+	// TODO: format error text
+	return ""
 }
 
 type TaskScheduler struct {
-    tasks  []*Task
-    nextID int
+	tasks  []*Task
+	nextID int
 }
 
 func NewTaskScheduler() *TaskScheduler {
-    // TODO: initialize scheduler state
-    return &TaskScheduler{}
+	// TODO: initialize scheduler state
+	return &TaskScheduler{}
 }
 
 func (ts *TaskScheduler) AddTask(name string, scheduled time.Time, execFn func()) (*Task, *SchedulerError) {
-    // TODO: validate and append to scheduler
-    return nil, nil
+	// TODO: validate and append to scheduler
+	return nil, nil
 }
 
 func (ts *TaskScheduler) GetTask(id int) (*Task, *SchedulerError) {
-    // TODO: find task by ID or return error
-    return nil, nil
+	// TODO: find task by ID or return error
+	return nil, nil
 }
 
 type TaskIterator struct {
@@ -55,15 +55,15 @@ type TaskIterator struct {
 }
 
 func (ts *TaskScheduler) Iterator() *TaskIterator {
-    // TODO: return an iterator over tasks
-    return &TaskIterator{}
+	// TODO: return an iterator over tasks
+	return &TaskIterator{}
 }
 
 func (it *TaskIterator) Next() (*Task, bool) {
-    // TODO: return next task if available
-    return nil, false
+	// TODO: return next task if available
+	return nil, false
 }
 
 func (ts *TaskScheduler) RunScheduledTasks() {
-    // TODO: execute scheduled tasks
+	// TODO: execute scheduled tasks
 }

@@ -1,7 +1,7 @@
 package custom_errors
 
 import (
-    "fmt"
+	"fmt"
 )
 
 // TODO:
@@ -10,16 +10,16 @@ import (
 // - Implement processInput to return an error for invalid input (negative).
 
 type MyError struct {
-    Code    int
-    Message string
+	Code    int
+	Message string
 }
 
 func (e *MyError) Error() string {
-    // TODO: format the error message
-    return ""
+	// TODO: format the error message
+	return ""
 }
 
 func processInput(input int) (string, *MyError) {
-    // TODO: return an error for negative input, otherwise success
-    return "", nil
+	// TODO: return an error for negative input, otherwise success
+	return "", nil
 }

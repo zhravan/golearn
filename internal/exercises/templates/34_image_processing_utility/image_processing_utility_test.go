@@ -39,4 +39,3 @@ func TestInvert(t *testing.T) {
 		t.Errorf("Expected inverted color (0, 0xFFFF, 0xFFFF, 0xFFFF), got (%d, %d, %d, %d)", r, g, b, a)
 	}
 }
-

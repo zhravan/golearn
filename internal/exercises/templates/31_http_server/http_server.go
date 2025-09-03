@@ -1,7 +1,7 @@
 package http_server
 
 import (
-    "net/http"
+	"net/http"
 )
 
 // TODO:
@@ -11,13 +11,13 @@ import (
 // - Keep function names; tests validate handler response and basic server start.
 
 func helloHandler(w http.ResponseWriter, r *http.Request) {
-    // TODO: write a greeting response based on the path
+	// TODO: write a greeting response based on the path
 }
 
 func StartServer() {
-    // TODO: register routes and start listening on :8080
+	// TODO: register routes and start listening on :8080
 }
 
 func main() {
-    // (no-op in skeleton)
+	// (no-op in skeleton)
 }

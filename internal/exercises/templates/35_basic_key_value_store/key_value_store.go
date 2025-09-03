@@ -1,7 +1,7 @@
 package basic_key_value_store
 
 import (
-    "sync"
+	"sync"
 )
 
 // TODO:
@@ -18,38 +18,38 @@ type KeyValueStore struct {
 }
 
 type StoreError struct {
-    Message string
+	Message string
 }
 
 func (e *StoreError) Error() string {
-    return e.Message
+	return e.Message
 }
 
 func NewKeyValueStore(filepath string) *KeyValueStore {
-    // TODO: initialize the store
-    return &KeyValueStore{}
+	// TODO: initialize the store
+	return &KeyValueStore{}
 }
 
 func (s *KeyValueStore) Load() error {
-    // TODO: load key/value pairs from file if present
-    return nil
+	// TODO: load key/value pairs from file if present
+	return nil
 }
 
 func (s *KeyValueStore) Save() error {
-    // TODO: write pairs to file
-    return nil
+	// TODO: write pairs to file
+	return nil
 }
 
 func (s *KeyValueStore) Set(key, value string) {
-    // TODO: set key to value
+	// TODO: set key to value
 }
 
 func (s *KeyValueStore) Get(key string) (string, *StoreError) {
-    // TODO: get value or return error when missing
-    return "", nil
+	// TODO: get value or return error when missing
+	return "", nil
 }
 
 func (s *KeyValueStore) Delete(key string) *StoreError {
-    // TODO: delete key or return error when missing
-    return nil
+	// TODO: delete key or return error when missing
+	return nil
 }

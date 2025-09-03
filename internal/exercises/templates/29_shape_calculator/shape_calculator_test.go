@@ -33,4 +33,3 @@ func TestShapeInterface(t *testing.T) {
 		t.Errorf("Rectangle area through interface is 0")
 	}
 }
-

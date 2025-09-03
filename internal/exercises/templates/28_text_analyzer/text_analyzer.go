@@ -7,16 +7,16 @@ package text_analyzer
 //   - CountUniqueWords: count unique words case-insensitively.
 
 func CountCharacters(text string) int {
-    // TODO: implement
-    return 0
+	// TODO: implement
+	return 0
 }
 
 func CountWords(text string) int {
-    // TODO: implement
-    return 0
+	// TODO: implement
+	return 0
 }
 
 func CountUniqueWords(text string) int {
-    // TODO: implement
-    return 0
+	// TODO: implement
+	return 0
 }

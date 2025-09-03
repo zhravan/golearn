@@ -5,10 +5,10 @@ package errors
 // - Implement processDivision to print result or error accordingly.
 
 func divide(a, b int) (int, error) {
-    // TODO: return an error when b == 0
-    return 0, nil
+	// TODO: return an error when b == 0
+	return 0, nil
 }
 
 func processDivision(a, b int) {
-    // TODO: call divide and print an error or the result
+	// TODO: call divide and print an error or the result
 }

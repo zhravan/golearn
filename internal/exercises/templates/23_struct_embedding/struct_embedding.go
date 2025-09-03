@@ -17,6 +17,6 @@ type User struct {
 }
 
 func NewUser(id int, createdAt, name, email string) User {
-    // TODO: return a properly initialized User embedding Base
-    return User{}
+	// TODO: return a properly initialized User embedding Base
+	return User{}
 }

@@ -78,4 +78,3 @@ func TestTaskIterator(t *testing.T) {
 		t.Errorf("Expected no more tasks, got one")
 	}
 }
-

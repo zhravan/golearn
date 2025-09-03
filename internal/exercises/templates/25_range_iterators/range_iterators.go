@@ -6,20 +6,20 @@ package range_iterators
 // - Implement IterateInts to apply a callback across the iterator range.
 
 type IntIterator struct {
-    current int
-    end     int
+	current int
+	end     int
 }
 
 func NewIntIterator(start, end int) *IntIterator {
-    // TODO: initialize iterator state
-    return &IntIterator{}
+	// TODO: initialize iterator state
+	return &IntIterator{}
 }
 
 func (it *IntIterator) Next() (int, bool) {
-    // TODO: return next value while current < end
-    return 0, false
+	// TODO: return next value while current < end
+	return 0, false
 }
 
 func IterateInts(start, end int, fn func(int)) {
-    // TODO: iterate using the iterator and call fn on each value
+	// TODO: iterate using the iterator and call fn on each value
 }
