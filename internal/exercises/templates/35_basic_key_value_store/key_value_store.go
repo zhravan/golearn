@@ -4,17 +4,12 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 	"sync"
 )
 
-// TODO:
-// - Implement a basic persistent key-value store:
-//   - In-memory map protected with RWMutex.
-//   - Load: read key=value pairs from a file if present.
-//   - Save: write all pairs to a file.
-//   - Set/Get/Delete operations; Get/Delete error on missing keys.
-
+// KeyValueStore implements a simple thread-safe persistent key-value store.
 type KeyValueStore struct {
 	data     map[string]string
 	filepath string
@@ -29,19 +24,19 @@ func (e *StoreError) Error() string {
 	return e.Message
 }
 
+// Sentinel error for missing keys.
+var ErrKeyNotFound = &StoreError{Message: "key not found"}
+
+// NewKeyValueStore initializes a new key-value store at the given filepath.
 func NewKeyValueStore(filepath string) *KeyValueStore {
-	// TODO: initialize the store
 	return &KeyValueStore{
 		data:     make(map[string]string),
 		filepath: filepath,
 	}
 }
 
+// Load replaces the current store with the contents of the file.
 func (s *KeyValueStore) Load() error {
-	// TODO: load key/value pairs from file if present
-	s.mu.Lock()
-	defer s.mu.Unlock()
-
 	file, err := os.Open(s.filepath)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -52,61 +47,95 @@ func (s *KeyValueStore) Load() error {
 	defer file.Close()
 
 	scanner := bufio.NewScanner(file)
+	scanner.Buffer(make([]byte, 0), 1024*1024) // allow long lines up to 1MB
+	tmp := make(map[string]string)
 	for scanner.Scan() {
 		line := scanner.Text()
+		if line == "" {
+			continue
+		}
 		parts := strings.SplitN(line, "=", 2)
 		if len(parts) == 2 {
-			s.data[parts[0]] = parts[1]
+			k := strings.TrimSpace(parts[0])
+			v := strings.TrimSpace(parts[1])
+			tmp[k] = v
 		}
 	}
+	if err := scanner.Err(); err != nil {
+		return err
+	}
 
-	return scanner.Err()
+	s.mu.Lock()
+	s.data = tmp
+	s.mu.Unlock()
+	return nil
 }
 
+// Save writes the store atomically to disk.
 func (s *KeyValueStore) Save() error {
-	// TODO: write pairs to file
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	file, err := os.Create(s.filepath)
+	// Snapshot under read lock
+	s.mu.RLock()
+	snapshot := make(map[string]string, len(s.data))
+	for k, v := range s.data {
+		snapshot[k] = v
+	}
+	s.mu.RUnlock()
+
+	dir := filepath.Dir(s.filepath)
+	tmp, err := os.CreateTemp(dir, ".kvtmp-*")
 	if err != nil {
 		return err
 	}
-	defer file.Close()
 
-	writer := bufio.NewWriter(file)
-	for k, v := range s.data {
-		_, err := fmt.Fprintf(writer, "%s=%s\n", k, v)
-		if err != nil {
+	writer := bufio.NewWriter(tmp)
+	for k, v := range snapshot {
+		if _, err := fmt.Fprintf(writer, "%s=%s\n", k, v); err != nil {
+			tmp.Close()
+			_ = os.Remove(tmp.Name())
 			return err
 		}
 	}
-	return writer.Flush()
+	if err := writer.Flush(); err != nil {
+		tmp.Close()
+		_ = os.Remove(tmp.Name())
+		return err
+	}
+	if err := tmp.Sync(); err != nil {
+		tmp.Close()
+		_ = os.Remove(tmp.Name())
+		return err
+	}
+	if err := tmp.Close(); err != nil {
+		_ = os.Remove(tmp.Name())
+		return err
+	}
+	return os.Rename(tmp.Name(), s.filepath)
 }
 
+// Set updates or inserts a key.
 func (s *KeyValueStore) Set(key, value string) {
-	// TODO: set key to value
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.data[key] = value
 }
 
+// Get retrieves a value or ErrKeyNotFound.
 func (s *KeyValueStore) Get(key string) (string, *StoreError) {
-	// TODO: get value or return error when missing
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 	val, ok := s.data[key]
 	if !ok {
-		return "", &StoreError{Message: "key not found"}
+		return "", ErrKeyNotFound
 	}
 	return val, nil
 }
 
+// Delete removes a key or returns ErrKeyNotFound.
 func (s *KeyValueStore) Delete(key string) *StoreError {
-	// TODO: delete key or return error when missing
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	if _, ok := s.data[key]; !ok {
-		return &StoreError{Message: "key not found"}
+		return ErrKeyNotFound
 	}
 	delete(s.data, key)
 	return nil

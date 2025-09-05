@@ -1,65 +1,76 @@
 package basic_key_value_store
 
 import (
-	"os"
+	"errors"
+	"path/filepath"
 	"testing"
 )
 
-// helper to clean up after tests
-func cleanup(filename string) {
-	_ = os.Remove(filename)
-}
-
 func TestLoadAndSave(t *testing.T) {
-	filename := "test_store.db"
-	defer cleanup(filename)
+	dir := t.TempDir()
+	filename := filepath.Join(dir, "test_store.db")
 
 	store := NewKeyValueStore(filename)
-
-	// Save data
 	store.Set("city", "New York")
 	store.Set("country", "USA")
 
-	// Persist to file
 	if err := store.Save(); err != nil {
-		t.Fatalf("failed to save: %v", err)
+		t.Fatalf("unexpected save error: %v", err)
 	}
 
-	// Create a new store instance to load from file
-	store2 := NewKeyValueStore(filename)
-
-	// Reload data
-	if err := store2.Load(); err != nil {
-		t.Fatalf("failed to load: %v", err)
+	// load into a new store
+	other := NewKeyValueStore(filename)
+	if err := other.Load(); err != nil {
+		t.Fatalf("unexpected load error: %v", err)
 	}
 
-	// Verify city
-	val, err := store2.Get("city")
-	if err != nil {
-		t.Errorf("unexpected error: %v", err)
+	if v, err := other.Get("city"); v != "New York" || err != nil {
+		t.Errorf("expected New York, got %q, err=%v", v, err)
 	}
-	if val != "New York" {
-		t.Errorf("Expected %q, got %q", "New York", val)
-	}
-
-	// Verify country
-	val, err = store2.Get("country")
-	if err != nil {
-		t.Errorf("unexpected error: %v", err)
-	}
-	if val != "USA" {
-		t.Errorf("Expected %q, got %q", "USA", val)
+	if v, err := other.Get("country"); v != "USA" || err != nil {
+		t.Errorf("expected USA, got %q, err=%v", v, err)
 	}
 }
 
 func TestMissingKey(t *testing.T) {
-	filename := "test_store_missing.db"
-	defer cleanup(filename)
+	dir := t.TempDir()
+	filename := filepath.Join(dir, "test_store_missing.db")
 
 	store := NewKeyValueStore(filename)
+	store.Set("name", "Alice")
 
 	_, err := store.Get("notthere")
-	if err == nil {
-		t.Errorf("expected error for missing key, got nil")
+	if !errors.Is(err, ErrKeyNotFound) {
+		t.Errorf("expected ErrKeyNotFound, got %v", err)
+	}
+}
+
+func TestDelete(t *testing.T) {
+	t.Parallel()
+	dir := t.TempDir()
+	filename := filepath.Join(dir, "test_store.db")
+
+	store := NewKeyValueStore(filename)
+	store.Set("k", "v")
+
+	if err := store.Delete("k"); err != nil {
+		t.Fatalf("unexpected delete error: %v", err)
+	}
+	if _, err := store.Get("k"); !errors.Is(err, ErrKeyNotFound) {
+		t.Fatalf("expected ErrKeyNotFound after delete, got %v", err)
+	}
+	if err := store.Delete("k"); !errors.Is(err, ErrKeyNotFound) {
+		t.Fatalf("expected ErrKeyNotFound on second delete, got %v", err)
+	}
+}
+
+func TestLoadMissingFileIsNoop(t *testing.T) {
+	t.Parallel()
+	dir := t.TempDir()
+	filename := filepath.Join(dir, "does_not_exist.db")
+
+	store := NewKeyValueStore(filename)
+	if err := store.Load(); err != nil {
+		t.Fatalf("expected nil error on missing file, got %v", err)
 	}
 }
