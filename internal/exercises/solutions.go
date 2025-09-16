@@ -10,6 +10,7 @@ import (
 )
 
 // Embed the canonical solutions alongside templates. We do not expose these via CLI directly.
+//
 //go:embed solutions/**
 var solutionsFS embed.FS
 
@@ -108,5 +109,3 @@ func CreateSolutionSandbox(slug string) (string, func(), error) {
 
 	return workDir, cleanup, nil
 }
-
-
