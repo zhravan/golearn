@@ -1,23 +1,28 @@
 package http_server
 
 import (
+	"fmt"
 	"net/http"
+	"strings"
 )
 
-// TODO:
-// - Implement a minimal HTTP server:
-//   - helloHandler: respond with "Hello, {name}!" using the request path segment.
-//   - StartServer: register /hello route and start listening on :8080.
-// - Keep function names; tests validate handler response and basic server start.
-
+// helloHandler responds with "Hello, {name}!" based on the URL path segment
 func helloHandler(w http.ResponseWriter, r *http.Request) {
-	// TODO: write a greeting response based on the path
+	name := strings.TrimPrefix(r.URL.Path, "/hello/")
+	fmt.Fprintf(w, "Hello, %s!\n", name)
 }
 
+func init() {
+	http.HandleFunc("/hello/", helloHandler)
+}
+
+// StartServer registers the /hello/ route and starts an HTTP server on :8080
 func StartServer() {
-	// TODO: register routes and start listening on :8080
+	http.ListenAndServe(":8080", nil)
+
 }
 
 func main() {
-	// (no-op in skeleton)
+	StartServer()
+
 }
