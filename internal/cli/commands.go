@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"bufio"
 	"bytes"
 	"encoding/json"
 	"errors"
@@ -15,9 +16,9 @@ import (
 	"time"
 
 	"github.com/fsnotify/fsnotify"
-	"github.com/shravan20/golearn/internal/cli/theme"
-	"github.com/shravan20/golearn/internal/exercises"
-	"github.com/shravan20/golearn/internal/progress"
+	"github.com/zhravan/golearn/internal/cli/theme"
+	"github.com/zhravan/golearn/internal/exercises"
+	"github.com/zhravan/golearn/internal/progress"
 )
 
 func runList() error {
@@ -89,6 +90,44 @@ func runVerify(name string) error {
 	return nil
 }
 
+// runVerifyWithOptions extends verification to support running against the embedded
+// solution implementation. When useSolution is true, name must be provided.
+func runVerifyWithOptions(name string, useSolution bool) error {
+	if !useSolution {
+		return runVerify(name)
+	}
+	if strings.TrimSpace(name) == "" {
+		return errors.New("--solution requires a specific exercise name")
+	}
+	ex, err := exercises.Get(name)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("\n%s\n", theme.Heading("==> "+ex.Slug+": "+ex.Title+" (solution)"))
+
+	dir, cleanup, err := exercises.CreateSolutionSandbox(ex.Slug)
+	if err != nil {
+		return err
+	}
+	defer cleanup()
+
+	cmd := exec.Command("go", "test", "-run", ex.TestRegex, "-json", ".")
+	cmd.Env = append(os.Environ(), "GOFLAGS=-count=1")
+	cmd.Dir = dir
+	out, err := cmd.CombinedOutput()
+
+	parseAndDisplayJSON(out)
+
+	if err == nil {
+		// Do NOT mark progress when validating with solutions
+		fmt.Printf("%s %s (solution)\n", theme.Success("PASSED"), ex.Slug)
+		return nil
+	}
+	fmt.Printf("%s %s (solution)\n", theme.Error("FAILED"), ex.Slug)
+	return err
+}
+
 func verifyOne(ex exercises.Exercise) error {
 	fmt.Printf("\n%s\n", theme.Heading("==> "+ex.Slug+": "+ex.Title))
 
@@ -150,6 +189,34 @@ func runHint(name string) error {
 	for i, h := range ex.Hints {
 		fmt.Printf("%d) %s\n", i+1, theme.Hint(h))
 	}
+	return nil
+}
+
+// runSolution implements the hint-first flow for solutions. It never prints
+// solution code in the CLI; instead it offers hints or a GitHub link.
+func runSolution(name string) error {
+	ex, err := exercises.Get(name)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("%s\n", theme.Emph("Are you sure you want to view the solution?"))
+	fmt.Print("Why not take a hint first? View hints now? [y/N]: ")
+
+	in := bufio.NewReader(os.Stdin)
+	line, _ := in.ReadString('\n')
+	line = strings.TrimSpace(strings.ToLower(line))
+	if line == "y" || line == "yes" {
+		return runHint(ex.Slug)
+	}
+
+	branch := strings.TrimSpace(os.Getenv("GOLEARN_SOLUTIONS_BRANCH"))
+	if branch == "" {
+		branch = "main"
+	}
+	link := fmt.Sprintf("https://github.com/zhravan/golearn/tree/%s/internal/exercises/solutions/%s", branch, ex.Slug)
+	fmt.Printf("View solution on GitHub: %s\n", link)
+	fmt.Printf("%s\n", theme.Muted("Tip: run 'golearn verify "+ex.Slug+" --solution' to validate the solution against the tests."))
 	return nil
 }
 

@@ -11,7 +11,7 @@ This project is my attempt to learn Go by building as I learn, making the journe
 ### Install (Go 1.22+)
 
 ```bash
-go install github.com/shravan20/golearn/cmd/golearn@latest
+go install github.com/zhravan/golearn/cmd/golearn@latest
 ```
 
 ### Use
@@ -28,6 +28,9 @@ cd my-exercises
 # Learn
 golearn list
 golearn verify 01_hello
+golearn hint 01_hello
+golearn solution 01_hello   # Suggests hints; else prints GitHub link
+golearn verify 01_hello --solution  # Run tests against the embedded solution
 golearn progress    # Rich TUI with ASCII progress bar and checklist
 
 # Auto-verify on change (watch mode)
@@ -67,4 +70,3 @@ make watch
 <div align="center">
     <img src="https://img.shields.io/badge/Built%20with%20%E2%9D%A4%EF%B8%8F-for%20learning%20and%20knowledge%20sharing-blueviolet"/>
 </div>
-
