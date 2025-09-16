@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/shravan20/golearn/internal/cli/theme"
+	"github.com/zhravan/golearn/internal/cli/theme"
 )
 
 // HelpText returns usage information for the CLI.
@@ -14,7 +14,9 @@ func HelpText() string {
 Usage:
   golearn list                List available exercises
   golearn verify [name]       Run tests for a specific exercise (or all)
+      --solution              Run tests against the embedded solution
   golearn hint [name]         Show hints for an exercise
+  golearn solution [name]     Show solution flow (hint-first; or link)
   golearn watch               Watch files and re-run tests on change
   golearn progress            Show progress
   golearn reset [name]        Reset exercise to starter state
@@ -45,15 +47,27 @@ func Execute(args []string) error {
 		return runList()
 	case "verify":
 		var name string
-		if len(args) > 1 {
-			name = args[1]
+		var useSolution bool
+		for i := 1; i < len(args); i++ {
+			if args[i] == "--solution" {
+				useSolution = true
+				continue
+			}
+			if name == "" {
+				name = args[i]
+			}
 		}
-		return runVerify(name)
+		return runVerifyWithOptions(name, useSolution)
 	case "hint":
 		if len(args) < 2 {
 			return errors.New("hint requires an exercise name")
 		}
 		return runHint(args[1])
+	case "solution":
+		if len(args) < 2 {
+			return errors.New("solution requires an exercise name")
+		}
+		return runSolution(args[1])
 	case "watch":
 		return runWatch()
 	case "progress":
