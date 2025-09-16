@@ -1,4 +1,4 @@
-module github.com/shravan20/golearn
+module github.com/zhravan/golearn
 
 go 1.22.0
 
