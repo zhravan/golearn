@@ -19,6 +19,7 @@ Usage:
   golearn solution [name]     Show solution flow (hint-first; or link)
   golearn watch               Watch files and re-run tests on change
   golearn progress            Show progress
+  golearn publish [options]  Publish your progress to upstream as a PR
   golearn reset [name]        Reset exercise to starter state
   golearn init [repo] [dir]   Initialize workspace: clone exercises repo or copy built-in templates
   golearn help                Show this help
@@ -27,6 +28,12 @@ Global options:
   --no-color                  Disable ANSI colors (honors NO_COLOR)
   --theme=<name>              Theme: default | high-contrast | monochrome
   --screen-reader, --sr       Optimize for screen readers; avoid screen clears
+
+Publish options (env overrides in parentheses):
+  --repo=<url>               Upstream repo to contribute to (GOLEARN_PUBLISH_REPO)
+  --user=<name>              Your GitHub username (GOLEARN_PUBLISH_USER)
+  --branch=<name>            Branch to create for the PR
+  --dry-run                  Print JSON snapshot instead of creating a PR
 `
 }
 
@@ -72,6 +79,9 @@ func Execute(args []string) error {
 		return runWatch()
 	case "progress":
 		return runProgress()
+    case "publish":
+        // pass through remaining args to the publish handler
+        return runPublish(args[1:])
 	case "reset":
 		var name string
 		if len(args) > 1 {
