@@ -1,10 +1,12 @@
 package cli
 
 import (
+	"bufio"
 	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"os/signal"
@@ -15,9 +17,9 @@ import (
 	"time"
 
 	"github.com/fsnotify/fsnotify"
-	"github.com/shravan20/golearn/internal/cli/theme"
-	"github.com/shravan20/golearn/internal/exercises"
-	"github.com/shravan20/golearn/internal/progress"
+	"github.com/zhravan/golearn/internal/cli/theme"
+	"github.com/zhravan/golearn/internal/exercises"
+	"github.com/zhravan/golearn/internal/progress"
 )
 
 func runList() error {
@@ -89,6 +91,44 @@ func runVerify(name string) error {
 	return nil
 }
 
+// runVerifyWithOptions extends verification to support running against the embedded
+// solution implementation. When useSolution is true, name must be provided.
+func runVerifyWithOptions(name string, useSolution bool) error {
+	if !useSolution {
+		return runVerify(name)
+	}
+	if strings.TrimSpace(name) == "" {
+		return errors.New("--solution requires a specific exercise name")
+	}
+	ex, err := exercises.Get(name)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("\n%s\n", theme.Heading("==> "+ex.Slug+": "+ex.Title+" (solution)"))
+
+	dir, cleanup, err := exercises.CreateSolutionSandbox(ex.Slug)
+	if err != nil {
+		return err
+	}
+	defer cleanup()
+
+	cmd := exec.Command("go", "test", "-run", ex.TestRegex, "-json", ".")
+	cmd.Env = append(os.Environ(), "GOFLAGS=-count=1")
+	cmd.Dir = dir
+	out, err := cmd.CombinedOutput()
+
+	parseAndDisplayJSON(out)
+
+	if err == nil {
+		// Do NOT mark progress when validating with solutions
+		fmt.Printf("%s %s (solution)\n", theme.Success("PASSED"), ex.Slug)
+		return nil
+	}
+	fmt.Printf("%s %s (solution)\n", theme.Error("FAILED"), ex.Slug)
+	return err
+}
+
 func verifyOne(ex exercises.Exercise) error {
 	fmt.Printf("\n%s\n", theme.Heading("==> "+ex.Slug+": "+ex.Title))
 
@@ -150,6 +190,34 @@ func runHint(name string) error {
 	for i, h := range ex.Hints {
 		fmt.Printf("%d) %s\n", i+1, theme.Hint(h))
 	}
+	return nil
+}
+
+// runSolution implements the hint-first flow for solutions. It never prints
+// solution code in the CLI; instead it offers hints or a GitHub link.
+func runSolution(name string) error {
+	ex, err := exercises.Get(name)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("%s\n", theme.Emph("Are you sure you want to view the solution?"))
+	fmt.Print("Why not take a hint first? View hints now? [y/N]: ")
+
+	in := bufio.NewReader(os.Stdin)
+	line, _ := in.ReadString('\n')
+	line = strings.TrimSpace(strings.ToLower(line))
+	if line == "y" || line == "yes" {
+		return runHint(ex.Slug)
+	}
+
+	branch := strings.TrimSpace(os.Getenv("GOLEARN_SOLUTIONS_BRANCH"))
+	if branch == "" {
+		branch = "main"
+	}
+	link := fmt.Sprintf("https://github.com/zhravan/golearn/tree/%s/internal/exercises/solutions/%s", branch, ex.Slug)
+	fmt.Printf("View solution on GitHub: %s\n", link)
+	fmt.Printf("%s\n", theme.Muted("Tip: run 'golearn verify "+ex.Slug+" --solution' to validate the solution against the tests."))
 	return nil
 }
 
@@ -395,4 +463,367 @@ func progressBarWidth() int {
 		}
 	}
 	return 60
+}
+
+// runPublish collects local progress and attempts to create a PR against the upstream repo
+// adding/refreshing a JSON snapshot under contrib/leaderboard/progress/<user>.json.
+// It prefers the GitHub CLI if available and the user is authenticated. Otherwise, it
+// prints the snapshot and manual steps.
+func runPublish(args []string) error {
+	repoURL, userName, branchName, dryRun := parsePublishFlags(args)
+	if repoURL == "" {
+		repoURL = strings.TrimSpace(os.Getenv("GOLEARN_PUBLISH_REPO"))
+		if repoURL == "" {
+			repoURL = "https://github.com/zhravan/golearn"
+		}
+	}
+	if userName == "" {
+		userName = strings.TrimSpace(os.Getenv("GOLEARN_PUBLISH_USER"))
+	}
+	if branchName == "" {
+		branchName = fmt.Sprintf("progress/%s-%s", sanitizeForFile(userName), time.Now().Format("20060102-150405"))
+	}
+
+	// Build snapshot
+	snap, err := buildProgressSnapshot(userName)
+	if err != nil {
+		return err
+	}
+
+	if dryRun {
+		b, _ := json.MarshalIndent(snap, "", "  ")
+		fmt.Println(string(b))
+		fmt.Println(theme.Muted("Dry-run: not creating a PR."))
+		return nil
+	}
+
+	// Prefer GitHub CLI if present
+	if _, lookErr := exec.LookPath("gh"); lookErr != nil {
+		fmt.Println(theme.Muted("GitHub CLI not found. Printing snapshot and manual steps."))
+		return printManualPublishInstructions(repoURL, snap)
+	}
+
+	// Ensure auth
+	if err := exec.Command("gh", "auth", "status").Run(); err != nil {
+		fmt.Println(theme.Muted("GitHub CLI not authenticated. Run 'gh auth login' first."))
+		return printManualPublishInstructions(repoURL, snap)
+	}
+
+	// If username is still empty, derive from gh
+	if strings.TrimSpace(userName) == "" {
+		out, err := exec.Command("gh", "api", "user", "-q", ".login").Output()
+		if err == nil {
+			userName = strings.TrimSpace(string(out))
+		}
+	}
+
+	owner, name := parseRepoOwnerAndName(repoURL)
+	if owner == "" || name == "" {
+		return fmt.Errorf("unable to parse repo URL: %s", repoURL)
+	}
+
+	// Ensure fork exists (no-op if already exists)
+	_ = exec.Command("gh", "repo", "fork", fmt.Sprintf("%s/%s", owner, name), "--clone=false", "--remote=false").Run()
+
+	// Work in a temporary clone of upstream
+	tmpDir, err := ioutil.TempDir("", "golearn-publish-")
+	if err != nil {
+		return err
+	}
+	defer os.RemoveAll(tmpDir)
+
+	cloneCmd := exec.Command("git", "clone", repoURL, ".")
+	cloneCmd.Dir = tmpDir
+	cloneCmd.Stdout = os.Stdout
+	cloneCmd.Stderr = os.Stderr
+	if err := cloneCmd.Run(); err != nil {
+		return fmt.Errorf("git clone failed: %w", err)
+	}
+
+	// Create branch
+	if err := runCmd(tmpDir, "git", "checkout", "-b", branchName); err != nil {
+		return err
+	}
+
+	// Write snapshot file
+	progressDir := filepath.Join(tmpDir, "contrib", "leaderboard", "progress")
+	if err := os.MkdirAll(progressDir, 0o755); err != nil {
+		return err
+	}
+	fileName := sanitizeForFile(userName)
+	if fileName == "" {
+		fileName = "anonymous"
+	}
+	filePath := filepath.Join(progressDir, fileName+".json")
+	b, _ := json.MarshalIndent(snap, "", "  ")
+	if err := os.WriteFile(filePath, b, 0o644); err != nil {
+		return err
+	}
+
+	// Update README leaderboard section
+	if err := updateLeaderboardReadme(tmpDir, progressDir); err != nil {
+		fmt.Printf("Warning: could not update README leaderboard: %v\n", err)
+	}
+
+	if err := runCmd(tmpDir, "git", "add", filePath); err != nil {
+		return err
+	}
+	_ = runCmd(tmpDir, "git", "add", filepath.Join(tmpDir, "README.md"))
+	msg := fmt.Sprintf("chore(leaderboard): add progress for %s (%d/%d)", snap.User, snap.CompletedCount, snap.TotalCount)
+	if err := runCmd(tmpDir, "git", "commit", "-m", msg); err != nil {
+		return err
+	}
+
+	// Add fork remote and push
+	forkURL := fmt.Sprintf("https://github.com/%s/%s.git", userName, name)
+	_ = runCmd(tmpDir, "git", "remote", "remove", "fork")
+	if err := runCmd(tmpDir, "git", "remote", "add", "fork", forkURL); err != nil {
+		return err
+	}
+	if err := runCmd(tmpDir, "git", "push", "-u", "fork", branchName+":"+branchName); err != nil {
+		return err
+	}
+
+	// Create PR against upstream
+	prTitle := fmt.Sprintf("Add progress for %s (%d/%d)", snap.User, snap.CompletedCount, snap.TotalCount)
+	prBody := "Automated progress publish from golearn CLI. This adds/updates your progress snapshot for the leaderboard."
+	prCmd := exec.Command("gh", "pr", "create",
+		"--repo", fmt.Sprintf("%s/%s", owner, name),
+		"--head", fmt.Sprintf("%s:%s", userName, branchName),
+		"--base", "main",
+		"--title", prTitle,
+		"--body", prBody,
+	)
+	prCmd.Dir = tmpDir
+	prCmd.Stdout = os.Stdout
+	prCmd.Stderr = os.Stderr
+	if err := prCmd.Run(); err != nil {
+		fmt.Println(theme.Muted("Could not auto-create PR. You may need to open it manually."))
+		fmt.Printf("Branch pushed to %s:%s\n", forkURL, branchName)
+		fmt.Printf("Open a PR against %s/%s with head %s:%s\n", owner, name, userName, branchName)
+		return nil
+	}
+
+	return nil
+}
+
+func parsePublishFlags(args []string) (repo, user, branch string, dry bool) {
+	for _, a := range args {
+		if strings.HasPrefix(a, "--repo=") {
+			repo = strings.TrimSpace(strings.TrimPrefix(a, "--repo="))
+			continue
+		}
+		if strings.HasPrefix(a, "--user=") {
+			user = strings.TrimSpace(strings.TrimPrefix(a, "--user="))
+			continue
+		}
+		if strings.HasPrefix(a, "--branch=") {
+			branch = strings.TrimSpace(strings.TrimPrefix(a, "--branch="))
+			continue
+		}
+		if a == "--dry-run" || a == "--dry" {
+			dry = true
+			continue
+		}
+	}
+	return
+}
+
+type progressSnapshot struct {
+	User           string   `json:"user"`
+	CompletedCount int      `json:"completed_count"`
+	TotalCount     int      `json:"total_count"`
+	Percent        int      `json:"percent"`
+	CompletedSlugs []string `json:"completed_slugs"`
+	Timestamp      string   `json:"timestamp"`
+}
+
+func buildProgressSnapshot(user string) (progressSnapshot, error) {
+	catalog, err := exercises.ListAll()
+	if err != nil {
+		return progressSnapshot{}, err
+	}
+	var all []exercises.Exercise
+	all = append(all, catalog.Concepts...)
+	all = append(all, catalog.Projects...)
+	sort.Slice(all, func(i, j int) bool { return all[i].Slug < all[j].Slug })
+
+	var completed []string
+	for _, ex := range all {
+		ok, _ := progress.IsCompleted(ex.Slug)
+		if ok {
+			completed = append(completed, ex.Slug)
+		}
+	}
+	percent := 0
+	if len(all) > 0 {
+		percent = int(float64(len(completed)) / float64(len(all)) * 100)
+	}
+	return progressSnapshot{
+		User:           user,
+		CompletedCount: len(completed),
+		TotalCount:     len(all),
+		Percent:        percent,
+		CompletedSlugs: completed,
+		Timestamp:      time.Now().UTC().Format(time.RFC3339),
+	}, nil
+}
+
+func sanitizeForFile(s string) string {
+	s = strings.TrimSpace(strings.ToLower(s))
+	if s == "" {
+		return ""
+	}
+	// replace non-alphanumeric with '-'
+	var b strings.Builder
+	for _, r := range s {
+		if (r >= 'a' && r <= 'z') || (r >= '0' && r <= '9') || r == '-' || r == '_' {
+			b.WriteRune(r)
+		} else {
+			b.WriteRune('-')
+		}
+	}
+	return strings.Trim(b.String(), "-")
+}
+
+func parseRepoOwnerAndName(repoURL string) (owner, name string) {
+	url := strings.TrimSpace(repoURL)
+	url = strings.TrimSuffix(url, ".git")
+	if strings.Contains(url, "github.com") {
+		// handle https and ssh
+		if strings.HasPrefix(url, "git@") {
+			// git@github.com:owner/name(.git)
+			parts := strings.SplitN(url, ":", 2)
+			if len(parts) == 2 {
+				rest := parts[1]
+				segs := strings.Split(strings.TrimPrefix(rest, "/"), "/")
+				if len(segs) >= 2 {
+					return segs[0], segs[1]
+				}
+			}
+		} else {
+			// https://github.com/owner/name
+			idx := strings.Index(url, "github.com/")
+			if idx >= 0 {
+				rest := url[idx+len("github.com/"):]
+				segs := strings.Split(strings.TrimPrefix(rest, "/"), "/")
+				if len(segs) >= 2 {
+					return segs[0], segs[1]
+				}
+			}
+		}
+	}
+	return "", ""
+}
+
+func runCmd(dir string, name string, args ...string) error {
+	cmd := exec.Command(name, args...)
+	cmd.Dir = dir
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	return cmd.Run()
+}
+
+func printManualPublishInstructions(repoURL string, snap progressSnapshot) error {
+	b, _ := json.MarshalIndent(snap, "", "  ")
+	fmt.Println(string(b))
+	fmt.Println()
+	fmt.Println(theme.Muted("Manual steps to publish your progress:"))
+	fmt.Println("1) Fork the repository if not already: https://github.com/zhravan/golearn")
+	fmt.Println("2) Clone upstream, create a branch, add the JSON under contrib/leaderboard/progress/<your-username>.json, commit, push to your fork, and open a PR.")
+	fmt.Println("   Repo:", repoURL)
+	return nil
+}
+
+type leaderRow struct {
+	User      string
+	Timestamp string
+}
+
+func updateLeaderboardReadme(repoDir string, progressDir string) error {
+	entries, err := os.ReadDir(progressDir)
+	if err != nil {
+		return err
+	}
+	var rows []leaderRow
+	for _, e := range entries {
+		if e.IsDir() || !strings.HasSuffix(e.Name(), ".json") {
+			continue
+		}
+		b, err := os.ReadFile(filepath.Join(progressDir, e.Name()))
+		if err != nil {
+			continue
+		}
+		var ps progressSnapshot
+		if err := json.Unmarshal(b, &ps); err != nil {
+			continue
+		}
+		if ps.TotalCount > 0 && ps.CompletedCount == ps.TotalCount {
+			rows = append(rows, leaderRow{User: ps.User, Timestamp: ps.Timestamp})
+		}
+	}
+	// sort by timestamp ascending, then username
+	sort.Slice(rows, func(i, j int) bool {
+		if rows[i].Timestamp == rows[j].Timestamp {
+			return rows[i].User < rows[j].User
+		}
+		return rows[i].Timestamp < rows[j].Timestamp
+	})
+
+	// Build dynamic content only within markers
+	var section strings.Builder
+	section.WriteString("<!-- START_LEADERBOARD -->\n")
+	if len(rows) == 0 {
+		section.WriteString("No completions yet. Be the first!\n")
+	} else {
+		section.WriteString("| Image | Username | Date |\n")
+		section.WriteString("|---|---|---|\n")
+		for _, r := range rows {
+			avatar := fmt.Sprintf("https://github.com/%s.png?size=64", r.User)
+			profile := fmt.Sprintf("https://github.com/%s", r.User)
+			section.WriteString(fmt.Sprintf("| ![%s](%s) | [%s](%s) | %s |\n", r.User, avatar, r.User, profile, r.Timestamp))
+		}
+	}
+	section.WriteString("<!-- END_LEADERBOARD -->\n")
+
+	readmePath := filepath.Join(repoDir, "README.md")
+	old, err := os.ReadFile(readmePath)
+	if err != nil {
+		// If README missing, create a new README with header and section
+		var full strings.Builder
+		full.WriteString("## Leaderboard\n\n")
+		full.WriteString("The following users have completed all exercises (ascending by completion time):\n\n")
+		full.WriteString(section.String())
+		return os.WriteFile(readmePath, []byte(full.String()), 0o644)
+	}
+
+	// If markers are present, replace content between them; else append full section at end
+	updated := replaceBetweenMarkers(string(old), "<!-- START_LEADERBOARD -->", "<!-- END_LEADERBOARD -->", section.String())
+	if updated == string(old) {
+		// markers not found; append header + section
+		var full strings.Builder
+		full.WriteString(string(old))
+		if !strings.HasSuffix(string(old), "\n") {
+			full.WriteString("\n")
+		}
+		full.WriteString("\n## Leaderboard\n\n")
+		full.WriteString("The following users have completed all exercises (ascending by completion time):\n\n")
+		full.WriteString(section.String())
+		updated = full.String()
+	}
+	return os.WriteFile(readmePath, []byte(updated), 0o644)
+}
+
+func replaceBetweenMarkers(orig string, startMarker string, endMarker string, replacement string) string {
+	startIdx := strings.Index(orig, startMarker)
+	endIdx := strings.Index(orig, endMarker)
+	if startIdx == -1 || endIdx == -1 || endIdx < startIdx {
+		// append section at end
+		if strings.HasSuffix(orig, "\n") {
+			return orig + "\n" + replacement
+		}
+		return orig + "\n\n" + replacement
+	}
+	endIdx += len(endMarker)
+	return orig[:startIdx] + replacement + orig[endIdx:]
 }

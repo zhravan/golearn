@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/shravan20/golearn/internal/cli/theme"
+	"github.com/zhravan/golearn/internal/cli/theme"
 )
 
 // HelpText returns usage information for the CLI.
@@ -14,9 +14,12 @@ func HelpText() string {
 Usage:
   golearn list                List available exercises
   golearn verify [name]       Run tests for a specific exercise (or all)
+      --solution              Run tests against the embedded solution
   golearn hint [name]         Show hints for an exercise
+  golearn solution [name]     Show solution flow (hint-first; or link)
   golearn watch               Watch files and re-run tests on change
   golearn progress            Show progress
+  golearn publish [options]  Publish your progress to upstream as a PR
   golearn reset [name]        Reset exercise to starter state
   golearn init [repo] [dir]   Initialize workspace: clone exercises repo or copy built-in templates
   golearn help                Show this help
@@ -25,6 +28,12 @@ Global options:
   --no-color                  Disable ANSI colors (honors NO_COLOR)
   --theme=<name>              Theme: default | high-contrast | monochrome
   --screen-reader, --sr       Optimize for screen readers; avoid screen clears
+
+Publish options (env overrides in parentheses):
+  --repo=<url>               Upstream repo to contribute to (GOLEARN_PUBLISH_REPO)
+  --user=<name>              Your GitHub username (GOLEARN_PUBLISH_USER)
+  --branch=<name>            Branch to create for the PR
+  --dry-run                  Print JSON snapshot instead of creating a PR
 `
 }
 
@@ -45,19 +54,34 @@ func Execute(args []string) error {
 		return runList()
 	case "verify":
 		var name string
-		if len(args) > 1 {
-			name = args[1]
+		var useSolution bool
+		for i := 1; i < len(args); i++ {
+			if args[i] == "--solution" {
+				useSolution = true
+				continue
+			}
+			if name == "" {
+				name = args[i]
+			}
 		}
-		return runVerify(name)
+		return runVerifyWithOptions(name, useSolution)
 	case "hint":
 		if len(args) < 2 {
 			return errors.New("hint requires an exercise name")
 		}
 		return runHint(args[1])
+	case "solution":
+		if len(args) < 2 {
+			return errors.New("solution requires an exercise name")
+		}
+		return runSolution(args[1])
 	case "watch":
 		return runWatch()
 	case "progress":
 		return runProgress()
+	case "publish":
+		// pass through remaining args to the publish handler
+		return runPublish(args[1:])
 	case "reset":
 		var name string
 		if len(args) > 1 {
