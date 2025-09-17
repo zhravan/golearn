@@ -37,6 +37,11 @@ golearn progress    # Rich TUI with ASCII progress bar and checklist
 golearn watch       # Watches ./exercises and re-runs tests per edited exercise
 ```
 
+### Contributing
+- See [CONTRIBUTING.md](./CONTRIBUTING.md)
+- Please follow our [Code of Conduct](./CODE_OF_CONDUCT.md)
+- Security issues: see [SECURITY.md](./SECURITY.md)
+
 Need commands?
 
 ```bash
