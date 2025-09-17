@@ -776,8 +776,12 @@ func updateLeaderboardReadme(repoDir string, progressDir string) error {
     if len(rows) == 0 {
         section.WriteString("No completions yet. Be the first!\n")
     } else {
-        for i, r := range rows {
-            section.WriteString(fmt.Sprintf("%d. %s (%s)\n", i+1, r.User, r.Timestamp))
+        section.WriteString("| Image | Username | Date |\n")
+        section.WriteString("|---|---|---|\n")
+        for _, r := range rows {
+            avatar := fmt.Sprintf("https://github.com/%s.png?size=64", r.User)
+            profile := fmt.Sprintf("https://github.com/%s", r.User)
+            section.WriteString(fmt.Sprintf("| ![%s](%s) | [%s](%s) | %s |\n", r.User, avatar, r.User, profile, r.Timestamp))
         }
     }
     section.WriteString("<!-- END_LEADERBOARD -->\n")
