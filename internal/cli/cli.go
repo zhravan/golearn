@@ -79,9 +79,9 @@ func Execute(args []string) error {
 		return runWatch()
 	case "progress":
 		return runProgress()
-    case "publish":
-        // pass through remaining args to the publish handler
-        return runPublish(args[1:])
+	case "publish":
+		// pass through remaining args to the publish handler
+		return runPublish(args[1:])
 	case "reset":
 		var name string
 		if len(args) > 1 {

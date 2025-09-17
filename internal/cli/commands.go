@@ -770,48 +770,48 @@ func updateLeaderboardReadme(repoDir string, progressDir string) error {
 		return rows[i].Timestamp < rows[j].Timestamp
 	})
 
-    // Build dynamic content only within markers
-    var section strings.Builder
-    section.WriteString("<!-- START_LEADERBOARD -->\n")
-    if len(rows) == 0 {
-        section.WriteString("No completions yet. Be the first!\n")
-    } else {
-        section.WriteString("| Image | Username | Date |\n")
-        section.WriteString("|---|---|---|\n")
-        for _, r := range rows {
-            avatar := fmt.Sprintf("https://github.com/%s.png?size=64", r.User)
-            profile := fmt.Sprintf("https://github.com/%s", r.User)
-            section.WriteString(fmt.Sprintf("| ![%s](%s) | [%s](%s) | %s |\n", r.User, avatar, r.User, profile, r.Timestamp))
-        }
-    }
-    section.WriteString("<!-- END_LEADERBOARD -->\n")
+	// Build dynamic content only within markers
+	var section strings.Builder
+	section.WriteString("<!-- START_LEADERBOARD -->\n")
+	if len(rows) == 0 {
+		section.WriteString("No completions yet. Be the first!\n")
+	} else {
+		section.WriteString("| Image | Username | Date |\n")
+		section.WriteString("|---|---|---|\n")
+		for _, r := range rows {
+			avatar := fmt.Sprintf("https://github.com/%s.png?size=64", r.User)
+			profile := fmt.Sprintf("https://github.com/%s", r.User)
+			section.WriteString(fmt.Sprintf("| ![%s](%s) | [%s](%s) | %s |\n", r.User, avatar, r.User, profile, r.Timestamp))
+		}
+	}
+	section.WriteString("<!-- END_LEADERBOARD -->\n")
 
-    readmePath := filepath.Join(repoDir, "README.md")
-    old, err := os.ReadFile(readmePath)
-    if err != nil {
-        // If README missing, create a new README with header and section
-        var full strings.Builder
-        full.WriteString("## Leaderboard\n\n")
-        full.WriteString("The following users have completed all exercises (ascending by completion time):\n\n")
-        full.WriteString(section.String())
-        return os.WriteFile(readmePath, []byte(full.String()), 0o644)
-    }
+	readmePath := filepath.Join(repoDir, "README.md")
+	old, err := os.ReadFile(readmePath)
+	if err != nil {
+		// If README missing, create a new README with header and section
+		var full strings.Builder
+		full.WriteString("## Leaderboard\n\n")
+		full.WriteString("The following users have completed all exercises (ascending by completion time):\n\n")
+		full.WriteString(section.String())
+		return os.WriteFile(readmePath, []byte(full.String()), 0o644)
+	}
 
-    // If markers are present, replace content between them; else append full section at end
-    updated := replaceBetweenMarkers(string(old), "<!-- START_LEADERBOARD -->", "<!-- END_LEADERBOARD -->", section.String())
-    if updated == string(old) {
-        // markers not found; append header + section
-        var full strings.Builder
-        full.WriteString(string(old))
-        if !strings.HasSuffix(string(old), "\n") {
-            full.WriteString("\n")
-        }
-        full.WriteString("\n## Leaderboard\n\n")
-        full.WriteString("The following users have completed all exercises (ascending by completion time):\n\n")
-        full.WriteString(section.String())
-        updated = full.String()
-    }
-    return os.WriteFile(readmePath, []byte(updated), 0o644)
+	// If markers are present, replace content between them; else append full section at end
+	updated := replaceBetweenMarkers(string(old), "<!-- START_LEADERBOARD -->", "<!-- END_LEADERBOARD -->", section.String())
+	if updated == string(old) {
+		// markers not found; append header + section
+		var full strings.Builder
+		full.WriteString(string(old))
+		if !strings.HasSuffix(string(old), "\n") {
+			full.WriteString("\n")
+		}
+		full.WriteString("\n## Leaderboard\n\n")
+		full.WriteString("The following users have completed all exercises (ascending by completion time):\n\n")
+		full.WriteString(section.String())
+		updated = full.String()
+	}
+	return os.WriteFile(readmePath, []byte(updated), 0o644)
 }
 
 func replaceBetweenMarkers(orig string, startMarker string, endMarker string, replacement string) string {
