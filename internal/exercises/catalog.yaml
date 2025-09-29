@@ -134,7 +134,7 @@ concepts:
   test_regex: ".*"
   hints:
     - Define a custom error type and return it from a function.
-- slug: json
+- slug: 36_json
   title: JSON
   test_regex: ".*"
   hints:
