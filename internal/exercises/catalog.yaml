@@ -134,14 +134,6 @@ concepts:
   test_regex: ".*"
   hints:
     - Define a custom error type and return it from a function.
-- slug: 36_json
-  title: JSON
-  test_regex: ".*"
-  hints:
-    - Use the encoding/json package to work with JSON data.
-    - Implement MarshalPerson to convert a struct into JSON using json.Marshal.
-    - Implement UnmarshalPerson to convert a JSON string into a struct using json.Unmarshal.
-    - Handle and return errors properly in both functions.
 
 projects:
 - slug: 28_text_analyzer
@@ -184,4 +176,12 @@ projects:
   test_regex: ".*"
   hints:
     - Implement an in-memory key-value store with basic CRUD operations and optional persistence.
+- slug: 36_json
+  title: JSON
+  test_regex: ".*"
+  hints:
+    - Use the encoding/json package to work with JSON data.
+    - Implement MarshalPerson to convert a struct into JSON using json.Marshal.
+    - Implement UnmarshalPerson to convert a JSON string into a struct using json.Unmarshal.
+    - Handle and return errors properly in both functions.
 
