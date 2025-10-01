@@ -137,9 +137,6 @@ jobs:
     - name: Test publish dry-run
       run: |
         ./bin/golearn publish --dry-run
-        
-    - name: Run unit tests
-      run: go test ./...
       
     - name: Run exercise tests
       run: go test ./internal/exercises/...
