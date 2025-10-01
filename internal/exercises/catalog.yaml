@@ -134,6 +134,11 @@ concepts:
   test_regex: ".*"
   hints:
     - Define a custom error type and return it from a function.
+- slug: 28_defer
+  title: Deferred Execution
+  test_regex: ".*"
+  hints:
+    - Close the file using `defer` keyword with f.Close().
 
 projects:
 - slug: 101_text_analyzer
