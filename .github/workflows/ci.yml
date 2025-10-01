@@ -139,7 +139,14 @@ jobs:
         ./bin/golearn publish --dry-run
       
     - name: Run exercise tests
-      run: go test ./internal/exercises/...
+      run: |
+        echo "Running go tests for non-template exercise packages..."
+        packages=$(go list ./internal/exercises/... | grep -v '/templates')
+        if [ -n "$packages" ]; then
+          go test $packages
+        else
+          echo "No non-template packages to test."
+        fi
       
     - name: Test ALL exercise solutions (comprehensive)
       run: |
