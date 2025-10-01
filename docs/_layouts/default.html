@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="{{ page.lang | default: site.lang | default: 'en' }}">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="{{ page.excerpt | default: site.description | strip_html | normalize_whitespace | truncate: 160 | escape }}">
+  
+  <title>{% if page.title %}{{ page.title | escape }} - {% endif %}{{ site.title | escape }}</title>
+  
+  <link rel="stylesheet" href="{{ '/assets/css/gopher-theme.css' | relative_url }}">
+  <link rel="canonical" href="{{ page.url | absolute_url }}">
+  <link rel="alternate" type="application/rss+xml" title="{{ site.title | escape }}" href="{{ '/feed.xml' | relative_url }}">
+  
+  {% seo %}
+</head>
+
+<body class="gopher-body">
+  <!-- Gopher Header -->
+  <header class="gopher-header">
+    <div class="container">
+      <div class="gopher-logo">
+        <div class="gopher-title">
+          <h1><a href="{{ '/' | relative_url }}">{{ site.title }}</a></h1>
+          <p class="gopher-subtitle">{{ site.description }}</p>
+        </div>
+      </div>
+      
+      <nav class="gopher-nav">
+        <ul>
+          {% for page_path in site.header_pages %}
+            {% assign nav_page = site.pages | where: "path", page_path | first %}
+            {% if nav_page %}
+              <li><a href="{{ nav_page.url | relative_url }}" 
+                     {% if page.url == nav_page.url %}class="active"{% endif %}>
+                {{ nav_page.title | default: nav_page.name | capitalize }}
+              </a></li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="gopher-main">
+    <div class="container">
+      {{ content }}
+    </div>
+  </main>
+
+  <!-- Gopher Footer -->
+  <footer class="gopher-footer">
+    <div class="container">
+      <div class="gopher-footer-content">
+        <div class="gopher-footer-links">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="{{ '/getting-started' | relative_url }}">Get Started</a></li>
+            <li><a href="{{ '/exercises' | relative_url }}">Exercises</a></li>
+            <li><a href="{{ '/contributing' | relative_url }}">Contribute</a></li>
+            <li><a href="{{ site.social.github | prepend: 'https://github.com/' }}">GitHub</a></li>
+          </ul>
+        </div>
+        
+        <div class="gopher-footer-info">
+          <h4>GoLearn</h4>
+          <p>Learn Go the fun way with interactive exercises and gopher-powered tutorials!</p>
+        </div>
+      </div>
+      
+      <div class="gopher-footer-bottom">
+        <p>&copy; {{ 'now' | date: "%Y" }} {{ site.title }}</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Gopher floating elements -->
+  
+</body>
+</html>
