@@ -185,3 +185,16 @@ projects:
     - "Use Go's `time.Unix()` to convert an epoch to time."
     - "Use `t.Unix()` to convert time back to epoch."
     - "Remember Go’s `time.Parse` can help parse date strings."
+
+- slug: 37_recover
+  title: Safe Panic Recovery
+  topic: builtins
+  difficulty: medium
+  topics: ["panic", "recover", "defer"]
+  hints:
+    - hint_type: concept
+      text: The `recover()` function is ONLY useful inside a function that is executed by a `defer` statement. Outside of a deferred function, `recover` will return `nil` and have no effect.
+    - hint_type: structure
+      text: You must place a `defer` statement at the beginning of the `Run` function. The function passed to `defer` is where you should call `recover()`.
+    - hint_type: solution
+      text: "The core logic of the deferred function should look like this: `if r := recover(); r != nil { recoveredValue = r }`"
