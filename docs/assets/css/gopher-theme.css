@@ -44,21 +44,7 @@ body {
   overflow: hidden;
 }
 
-.gopher-header::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="50" font-size="20" fill="rgba(255,255,255,0.1)">🐹</text></svg>') repeat;
-  animation: gopher-float 20s linear infinite;
-}
-
-@keyframes gopher-float {
-  0% { transform: translateX(-100px); }
-  100% { transform: translateX(100vw); }
-}
+/* decorative header background removed */
 
 .gopher-logo {
   display: flex;
@@ -68,15 +54,7 @@ body {
   z-index: 2;
 }
 
-.gopher-avatar {
-  font-size: 3rem;
-  animation: gopher-bounce 2s ease-in-out infinite;
-}
-
-@keyframes gopher-bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
+/* avatar and bounce removed */
 
 .gopher-title h1 {
   margin: 0;
@@ -315,20 +293,7 @@ body {
   margin-bottom: 30px;
 }
 
-.gopher-footer-gopher {
-  text-align: center;
-}
-
-.gopher-dancing {
-  font-size: 3rem;
-  animation: gopher-dance 2s ease-in-out infinite;
-}
-
-@keyframes gopher-dance {
-  0%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(-10deg); }
-  75% { transform: rotate(10deg); }
-}
+/* dancing mascot removed */
 
 .gopher-footer-links h4,
 .gopher-footer-info h4 {
@@ -363,49 +328,7 @@ body {
   color: var(--gopher-gray);
 }
 
-/* Floating Gophers */
-.gopher-floating {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: -1;
-}
-
-.gopher-float {
-  position: absolute;
-  font-size: 2rem;
-  opacity: 0.1;
-  animation: gopher-float-around 15s linear infinite;
-}
-
-.gopher-1 {
-  top: 20%;
-  left: 10%;
-  animation-delay: 0s;
-}
-
-.gopher-2 {
-  top: 60%;
-  right: 15%;
-  animation-delay: -5s;
-}
-
-.gopher-3 {
-  bottom: 30%;
-  left: 20%;
-  animation-delay: -10s;
-}
-
-@keyframes gopher-float-around {
-  0% { transform: translateY(0) rotate(0deg); }
-  25% { transform: translateY(-20px) rotate(90deg); }
-  50% { transform: translateY(0) rotate(180deg); }
-  75% { transform: translateY(20px) rotate(270deg); }
-  100% { transform: translateY(0) rotate(360deg); }
-}
+/* floating mascots removed */
 
 /* Responsive Design */
 @media (max-width: 768px) {
