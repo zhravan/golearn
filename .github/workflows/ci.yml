@@ -1,0 +1,133 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.22'
+        
+    - name: Cache Go modules
+      uses: actions/cache@v3
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+          
+    - name: Install dependencies
+      run: go mod download
+      
+    - name: Run go vet
+      run: go vet ./...
+      
+    - name: Check formatting
+      run: |
+        if [ "$(gofmt -l .)" != "" ]; then
+          echo "Code is not formatted. Run 'go fmt ./...' to fix."
+          gofmt -l .
+          exit 1
+        fi
+        
+    - name: Build application
+      run: |
+        go build -o bin/golearn ./cmd/golearn
+        chmod +x bin/golearn
+        
+    - name: Test build works
+      run: |
+        ./bin/golearn --help
+        ./bin/golearn help
+        
+    - name: Test list command
+      run: |
+        ./bin/golearn list
+        
+    - name: Test progress command
+      run: |
+        ./bin/golearn progress
+        
+    - name: Test hint command (with valid exercise)
+      run: |
+        ./bin/golearn hint 01_hello || true
+        
+    - name: Test solution command (with valid exercise)
+      run: |
+        echo "n" | ./bin/golearn solution 01_hello
+        
+    - name: Test verify command (all exercises)
+      run: |
+        ./bin/golearn verify
+        
+    - name: Test verify command with solutions
+      run: |
+        # Test a few key exercises with their solutions
+        ./bin/golearn verify 01_hello --solution
+        ./bin/golearn verify 36_json --solution
+        ./bin/golearn verify 37_xml --solution
+        
+    - name: Test reset command
+      run: |
+        ./bin/golearn reset 01_hello
+        
+    - name: Test init command (built-in templates)
+      run: |
+        ./bin/golearn init
+        
+    - name: Test error handling
+      run: |
+        # Test invalid commands
+        ./bin/golearn invalid-command || true
+        ./bin/golearn hint || true
+        ./bin/golearn solution || true
+        ./bin/golearn reset || true
+        
+    - name: Test theme options
+      run: |
+        ./bin/golearn --no-color list
+        ./bin/golearn --theme=high-contrast list
+        ./bin/golearn --theme=monochrome list
+        
+    - name: Test publish dry-run
+      run: |
+        ./bin/golearn publish --dry-run
+        
+    - name: Run unit tests
+      run: go test ./...
+      
+    - name: Run exercise tests
+      run: go test ./internal/exercises/...
+      
+    - name: Test specific exercise solutions
+      run: |
+        # Test all solution exercises individually
+        for exercise in 01_hello 02_values 03_variables 04_constants 05_for 06_if_else 07_switch 08_arrays 09_slices 10_maps 11_functions 12_multi_return 13_variadic 14_closures 15_recursion 16_range_built_in 17_pointers 18_strings_runes 19_structs 20_methods 21_interfaces 22_enums 23_struct_embedding 24_generics 25_range_iterators 26_errors 27_custom_errors 36_json 37_xml 101_text_analyzer 102_shape_calculator 103_task_scheduler 104_http_server 105_cli_todo_list 106_simple_chat_app 107_image_processing_utility 108_basic_key_value_store 109_epoch; do
+          echo "Testing exercise: $exercise"
+          if ./bin/golearn verify "$exercise" --solution; then
+            echo "PASS: $exercise"
+          else
+            echo "FAIL: $exercise"
+            exit 1
+          fi
+        done
+        
+    - name: Verify binary works in different directory
+      run: |
+        cd /tmp
+        $GITHUB_WORKSPACE/bin/golearn --help
+        
+    - name: Test watch command (timeout after 5 seconds)
+      run: |
+        timeout 5s ./bin/golearn watch || true
