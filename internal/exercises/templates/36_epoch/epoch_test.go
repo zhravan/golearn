@@ -17,4 +17,3 @@ func TestTimeToEpoch(t *testing.T) {
 	if got != want {
 		t.Fatalf("TimeToEpoch(%q) = %d, want %d", input, got, want)
 	}
-}

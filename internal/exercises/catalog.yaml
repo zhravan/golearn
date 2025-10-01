@@ -197,3 +197,4 @@ projects:
       text: You must place a `defer` statement at the beginning of the `Run` function. The function passed to `defer` is where you should call `recover()`.
     - hint_type: solution
       text: "The core logic of the deferred function should look like this: `if r := recover(); r != nil { recoveredValue = r }`"
+
