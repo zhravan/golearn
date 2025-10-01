@@ -1,98 +1,76 @@
 package basic_key_value_store
 
 import (
-	"os"
+	"errors"
+	"path/filepath"
 	"testing"
 )
 
-func TestNewKeyValueStore(t *testing.T) {
-	filepath := "test_kv_store.txt"
-	s := NewKeyValueStore(filepath)
-	if s == nil {
-		t.Errorf("Expected a new KeyValueStore, got nil")
+func TestLoadAndSave(t *testing.T) {
+	dir := t.TempDir()
+	filename := filepath.Join(dir, "test_store.db")
+
+	store := NewKeyValueStore(filename)
+	store.Set("city", "New York")
+	store.Set("country", "USA")
+
+	if err := store.Save(); err != nil {
+		t.Fatalf("unexpected save error: %v", err)
 	}
-	if s.filepath != filepath {
-		t.Errorf("Expected filepath %s, got %s", filepath, s.filepath)
+
+	// load into a new store
+	other := NewKeyValueStore(filename)
+	if err := other.Load(); err != nil {
+		t.Fatalf("unexpected load error: %v", err)
 	}
-	if s.data == nil {
-		t.Errorf("Expected data map to be initialized, got nil")
+
+	if v, err := other.Get("city"); v != "New York" || err != nil {
+		t.Errorf("expected New York, got %q, err=%v", v, err)
+	}
+	if v, err := other.Get("country"); v != "USA" || err != nil {
+		t.Errorf("expected USA, got %q, err=%v", v, err)
 	}
 }
 
-func TestSetAndGet(t *testing.T) {
-	filepath := "test_set_get.txt"
-	defer os.Remove(filepath)
+func TestMissingKey(t *testing.T) {
+	dir := t.TempDir()
+	filename := filepath.Join(dir, "test_store_missing.db")
 
-	s := NewKeyValueStore(filepath)
-	s.Set("name", "Alice")
-	s.Set("age", "30")
+	store := NewKeyValueStore(filename)
+	store.Set("name", "Alice")
 
-	val, err := s.Get("name")
-	if err != nil || val != "Alice" {
-		t.Errorf("Expected 'Alice', got %q, error: %v", val, err)
-	}
-
-	val, err = s.Get("age")
-	if err != nil || val != "30" {
-		t.Errorf("Expected '30', got %q, error: %v", val, err)
-	}
-
-	_, err = s.Get("nonexistent")
-	if err == nil {
-		t.Errorf("Expected error for non-existent key, got nil")
+	_, err := store.Get("notthere")
+	if !errors.Is(err, ErrKeyNotFound) {
+		t.Errorf("expected ErrKeyNotFound, got %v", err)
 	}
 }
 
 func TestDelete(t *testing.T) {
-	filepath := "test_delete.txt"
-	defer os.Remove(filepath)
+	t.Parallel()
+	dir := t.TempDir()
+	filename := filepath.Join(dir, "test_store.db")
 
-	s := NewKeyValueStore(filepath)
-	s.Set("key1", "value1")
+	store := NewKeyValueStore(filename)
+	store.Set("k", "v")
 
-	err := s.Delete("key1")
-	if err != nil {
-		t.Errorf("Expected no error, got %v", err)
+	if err := store.Delete("k"); err != nil {
+		t.Fatalf("unexpected delete error: %v", err)
 	}
-
-	_, err = s.Get("key1")
-	if err == nil {
-		t.Errorf("Expected error for deleted key, got nil")
+	if _, err := store.Get("k"); !errors.Is(err, ErrKeyNotFound) {
+		t.Fatalf("expected ErrKeyNotFound after delete, got %v", err)
 	}
-
-	err = s.Delete("nonexistent")
-	if err == nil {
-		t.Errorf("Expected error for deleting non-existent key, got nil")
+	if err := store.Delete("k"); !errors.Is(err, ErrKeyNotFound) {
+		t.Fatalf("expected ErrKeyNotFound on second delete, got %v", err)
 	}
 }
 
-func TestLoadAndSave(t *testing.T) {
-	filepath := "test_load_save.txt"
-	defer os.Remove(filepath)
+func TestLoadMissingFileIsNoop(t *testing.T) {
+	t.Parallel()
+	dir := t.TempDir()
+	filename := filepath.Join(dir, "does_not_exist.db")
 
-	// Create a store and save it
-	s1 := NewKeyValueStore(filepath)
-	s1.Set("city", "New York")
-	s1.Set("country", "USA")
-	err := s1.Save()
-	if err != nil {
-		t.Fatalf("Failed to save store: %v", err)
-	}
-
-	// Load into a new store
-	s2 := NewKeyValueStore(filepath)
-	err = s2.Load()
-	if err != nil {
-		t.Fatalf("Failed to load store: %v", err)
-	}
-
-	val, err := s2.Get("city")
-	if err != nil || val != "New York" {
-		t.Errorf("Expected 'New York', got %q, error: %v", val, err)
-	}
-
-	val, err = s2.Get("country")
-	if err != nil || val != "USA" {
-		t.Errorf("Expected 'USA', got %q, error: %v", val, err)
+	store := NewKeyValueStore(filename)
+	if err := store.Load(); err != nil {
+		t.Fatalf("expected nil error on missing file, got %v", err)
 	}
 }
