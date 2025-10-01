@@ -3,7 +3,6 @@ package sorting_by_functions
 import "sort"
 
 // TODO:
-// - Complete the Person struct with Name and Age fields
 // - Implement the sort.Interface methods for ByName and ByAge
 // - Complete SortByName and SortByAge functions to sort slices using custom comparison
 

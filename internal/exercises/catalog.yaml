@@ -188,6 +188,7 @@ projects:
 
 - slug: 37_sorting_by_functions
   title: "Sorting by Functions"
+  difficulty: beginner
   topics: ["slices", "sorting", "functions"]
   hints:
       - "Implement sort.Interface with Len(), Less(), and Swap() methods"
