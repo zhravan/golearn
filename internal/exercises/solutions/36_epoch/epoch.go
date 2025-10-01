@@ -33,8 +33,6 @@ func GetCurrentFormattedTimeSimple() string {
 	return time.Now().UTC().Format("2006-01-02 15:04:05 +0000 UTC")
 }
 
-
-
 // EpochToTime converts a unix epoch (seconds) into a formatted time string "2006-01-02 15:04:05".
 // The resulting time is in UTC.
 func EpochToTime(epoch int64) string {
@@ -52,13 +50,12 @@ func TimeToEpoch(input string) int64 {
 	return t.Unix()
 }
 
-
 // NowFormats returns the current time in all supported formats.
 func NowFormats() map[string]string {
 	now := time.Now().UTC()
 	return map[string]string{
-		"UnixSeconds":      time.Unix(now.Unix(), 0).Format("2006-01-02 15:04:05") + " (epoch: " + 
-		                    time.Unix(now.Unix(), 0).UTC().Format("2006-01-02 15:04:05") + ")",
+		"UnixSeconds": time.Unix(now.Unix(), 0).Format("2006-01-02 15:04:05") + " (epoch: " +
+			time.Unix(now.Unix(), 0).UTC().Format("2006-01-02 15:04:05") + ")",
 		"UnixSecondsRaw":   time.Unix(now.Unix(), 0).UTC().Format("2006-01-02 15:04:05"),
 		"UnixSecondsInt":   formatInt(now.Unix()),
 		"UnixMilliseconds": formatInt(now.UnixMilli()),

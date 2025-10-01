@@ -188,7 +188,6 @@ projects:
 
 - slug: 37_recover
   title: Safe Panic Recovery
-  topic: builtins
   difficulty: medium
   topics: ["panic", "recover", "defer"]
   hints:
