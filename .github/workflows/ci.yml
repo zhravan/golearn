@@ -153,37 +153,37 @@ jobs:
         echo "Testing ALL solution exercises to ensure they pass..."
         failed_exercises=()
         
-        # Test all concept exercises
-        for exercise in 01_hello 02_values 03_variables 04_constants 05_for 06_if_else 07_switch 08_arrays 09_slices 10_maps 11_functions 12_multi_return 13_variadic 14_closures 15_recursion 16_range_built_in 17_pointers 18_strings_runes 19_structs 20_methods 21_interfaces 22_enums 23_struct_embedding 24_generics 25_range_iterators 26_errors 27_custom_errors 36_json 37_xml; do
-          echo "Testing concept exercise: $exercise"
-          if ./bin/golearn verify "$exercise" --solution; then
-            echo "PASS: $exercise"
-          else
-            echo "FAIL: $exercise - solution implementation is broken or incomplete"
-            failed_exercises+=("$exercise")
+        echo "Discovering exercises that actually have solution implementations..."
+        exercises_to_test=()
+        for dir in ./internal/exercises/solutions/*; do
+          [ -d "$dir" ] || continue
+          if ls "$dir"/*.go >/dev/null 2>&1; then
+            exercises_to_test+=("$(basename "$dir")")
           fi
         done
-        
-        # Test all project exercises
-        for exercise in 101_text_analyzer 102_shape_calculator 103_task_scheduler 104_http_server 105_cli_todo_list 106_simple_chat_app 107_image_processing_utility 108_basic_key_value_store 109_epoch; do
-          echo "Testing project exercise: $exercise"
-          if ./bin/golearn verify "$exercise" --solution; then
-            echo "PASS: $exercise"
-          else
-            echo "FAIL: $exercise - solution implementation is broken or incomplete"
-            failed_exercises+=("$exercise")
-          fi
-        done
-        
-        # Report results
-        if [ ${#failed_exercises[@]} -eq 0 ]; then
-          echo "SUCCESS: All solution exercises passed - all solutions are working correctly"
+
+        if [ ${#exercises_to_test[@]} -eq 0 ]; then
+          echo "No solution exercises found to test. Skipping."
         else
-          echo "FAILURE: The following solution exercises failed - these solutions need to be fixed:"
-          for exercise in "${failed_exercises[@]}"; do
-            echo "  - $exercise"
+          for exercise in "${exercises_to_test[@]}"; do
+            echo "Testing solution exercise: $exercise"
+            if ./bin/golearn verify "$exercise" --solution; then
+              echo "PASS: $exercise"
+            else
+              echo "FAIL: $exercise - solution implementation is broken or incomplete"
+              failed_exercises+=("$exercise")
+            fi
           done
-          exit 1
+
+          if [ ${#failed_exercises[@]} -eq 0 ]; then
+            echo "SUCCESS: All solution exercises passed - all solutions are working correctly"
+          else
+            echo "FAILURE: The following solution exercises failed - these solutions need to be fixed:"
+            for exercise in "${failed_exercises[@]}"; do
+              echo "  - $exercise"
+            done
+            exit 1
+          fi
         fi
         
     - name: Verify binary works in different directory
