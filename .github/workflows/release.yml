@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: read
 
 jobs:
   build-and-release:
@@ -77,19 +78,41 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           next="${{ steps.next.outputs.next }}"
+          echo "Creating release: $next"
+          
+          # Create and push tag
           git tag "$next"
           git push origin "$next"
-          gh release create "$next" --generate-notes || true
+          
+          # Create release with proper error handling
+          if gh release create "$next" --generate-notes; then
+            echo "Release $next created successfully"
+          else
+            echo "Failed to create release $next, but continuing..."
+            exit 1
+          fi
 
       - name: Attach binaries (Linux/macOS)
-        if: always()
+        if: success()
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          next="${{ steps.next.outputs.next }}"
+          echo "Uploading binaries for release: $next"
+          
           # Build static binaries for common platforms
           mkdir -p dist
           GOOS=linux GOARCH=amd64 go build -o dist/golearn-linux-amd64 ./cmd/golearn
           GOOS=darwin GOARCH=arm64 go build -o dist/golearn-darwin-arm64 ./cmd/golearn
-          gh release upload "${{ steps.next.outputs.next }}" dist/* --clobber
+          GOOS=darwin GOARCH=amd64 go build -o dist/golearn-darwin-amd64 ./cmd/golearn
+          GOOS=windows GOARCH=amd64 go build -o dist/golearn-windows-amd64.exe ./cmd/golearn
+          
+          # Upload binaries to the release
+          if gh release upload "$next" dist/* --clobber; then
+            echo "Binaries uploaded successfully"
+          else
+            echo "Failed to upload binaries"
+            exit 1
+          fi
 

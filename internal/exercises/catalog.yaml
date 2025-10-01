@@ -136,42 +136,42 @@ concepts:
     - Define a custom error type and return it from a function.
 
 projects:
-- slug: 28_text_analyzer
+- slug: 101_text_analyzer
   title: Text Analyzer (Easy)
   test_regex: ".*"
   hints:
     - Implement functions to count characters, words, and unique words in a given text.
-- slug: 29_shape_calculator
+- slug: 102_shape_calculator
   title: Shape Area Calculator (Medium)
   test_regex: ".*"
   hints:
     - Define structs for different shapes, implement methods to calculate their areas, and use an interface for common shape behavior.
-- slug: 30_task_scheduler
+- slug: 103_task_scheduler
   title: Task Scheduler (Hard)
   test_regex: ".*"
   hints:
     - Create a task scheduler with features like adding/removing tasks, a custom iterator, closures for task execution, and custom error handling.
-- slug: 31_http_server
+- slug: 104_http_server
   title: HTTP Server (Easy)
   test_regex: ".*"
   hints:
     - Implement a basic HTTP server that responds to GET requests.
-- slug: 32_cli_todo_list
+- slug: 105_cli_todo_list
   title: CLI Todo List (Medium)
   test_regex: ".*"
   hints:
     - Build a command-line tool to manage a todo list, including adding, listing, and completing tasks.
-- slug: 33_simple_chat_app
+- slug: 106_simple_chat_app
   title: Simple Chat Application (Medium)
   test_regex: ".*"
   hints:
     - Create a basic client-server chat application.
-- slug: 34_image_processing_utility
+- slug: 107_image_processing_utility
   title: Image Processing Utility (Hard)
   test_regex: ".*"
   hints:
     - Develop a command-line utility for basic image transformations like resizing or converting to grayscale.
-- slug: 35_basic_key_value_store
+- slug: 108_basic_key_value_store
   title: Basic Key-Value Store (Hard)
   test_regex: ".*"
   hints:
@@ -185,7 +185,7 @@ projects:
     - Implement UnmarshalPerson to convert a JSON string into a struct using json.Unmarshal.
     - Handle and return errors properly in both functions.
 
-- slug: 36_epoch
+- slug: 109_epoch
   title: "Epoch Conversion"
   difficulty: beginner
   topics: ["time", "epoch", "unix"]
