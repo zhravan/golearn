@@ -192,6 +192,6 @@ projects:
   topics: ["slices", "sorting", "functions"]
   hints:
       - "Implement sort.Interface with Len(), Less(), and Swap() methods"
-      - "Create custom types like ByName and ByAge that embed []Person"
+      - "Create custom slice types like ByName and ByAge (e.g., type ByName []Person)"
       - "Use sort.Sort() to sort slices with your custom comparison logic"
       - "Remember to make copies of slices to avoid modifying the original"
