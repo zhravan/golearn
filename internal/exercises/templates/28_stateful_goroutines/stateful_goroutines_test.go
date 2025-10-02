@@ -12,9 +12,6 @@ func TestCounterInitialization(t *testing.T) {
 		t.Fatal("NewCounter() returned nil")
 	}
 
-	// Give goroutine time to start
-	time.Sleep(10 * time.Millisecond)
-
 	value := counter.GetValue()
 	if value != 0 {
 		t.Errorf("Initial counter value = %d, want 0", value)

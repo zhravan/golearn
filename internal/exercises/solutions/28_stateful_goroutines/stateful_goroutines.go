@@ -14,6 +14,7 @@ type writeOp struct {
 type Counter struct {
 	reads  chan readOp
 	writes chan writeOp
+	done   chan struct{}
 }
 
 // NewCounter creates and starts a new stateful counter
@@ -21,6 +22,7 @@ func NewCounter() *Counter {
 	c := &Counter{
 		reads:  make(chan readOp),
 		writes: make(chan writeOp),
+		done:   make(chan struct{}),
 	}
 
 	// Start the state-owning goroutine
@@ -33,6 +35,8 @@ func NewCounter() *Counter {
 			case write := <-c.writes:
 				state += write.amount
 				write.resp <- true
+			case <-c.done:
+				return
 			}
 		}
 	}()
@@ -57,4 +61,9 @@ func (c *Counter) GetValue() int {
 	}
 	c.reads <- read
 	return <-read.resp
+}
+
+// Close stops the state-owning goroutine
+func (c *Counter) Close() {
+	close(c.done)
 }
