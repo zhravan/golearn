@@ -208,6 +208,6 @@ projects:
   hints:
     - Use the regexp package from the standard library.
     - Compile the pattern with regexp.Compile or regexp.MustCompile.
-    - Use MatchString to check if the input matches the pattern.
+    - Use MatchString on the compiled regex to check if the input matches the pattern.
     - Patterns like ^a.*z$ match strings starting with 'a' and ending with 'z'.
     - See https://pkg.go.dev/regexp for more examples.
