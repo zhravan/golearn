@@ -217,3 +217,13 @@ projects:
     - "Use Go's `time.Unix()` to convert an epoch to time."
     - "Use `t.Unix()` to convert time back to epoch."
     - "Remember Go’s `time.Parse` can help parse date strings."
+
+- slug: 37_sorting_by_functions
+  title: "Sorting by Functions"
+  difficulty: beginner
+  topics: ["slices", "sorting", "functions"]
+  hints:
+      - "Implement sort.Interface with Len(), Less(), and Swap() methods"
+      - "Create custom slice types like ByName and ByAge (e.g., type ByName []Person)"
+      - "Use sort.Sort() to sort slices with your custom comparison logic"
+      - "Remember to make copies of slices to avoid modifying the original"
