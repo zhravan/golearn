@@ -7,6 +7,7 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 
 	"gopkg.in/yaml.v3"
@@ -126,11 +127,15 @@ func Get(slug string) (Exercise, error) {
 	}
 	// Fallback: if an embedded template or solution exists, synthesize an Exercise entry
 	if templateExists(slug) || SolutionExists(slug) {
+		fmt.Fprintf(os.Stderr,
+			"Warning: exercise '%s' found in templates/solutions but missing from catalog.yaml\n",
+			slug,
+		)
 		return Exercise{
 			Slug:      slug,
-			Title:     slug,
+				Title:     formatSlugAsTitle(slug), // e.g., "110 Recover"
 			TestRegex: ".*",
-			Hints:     nil,
+			Hints:     []string{"This exercise is missing proper catalog metadata. Check documentation."},
 		}, nil
 	}
 	return Exercise{}, fmt.Errorf("exercise not found: %s", slug)
@@ -194,6 +199,39 @@ func copyExerciseTemplate(slug string) error {
 		}
 		return os.WriteFile(dest, data, 0o644)
 	})
+}
+
+func formatSlugAsTitle(slug string) string {
+	s := strings.TrimSpace(slug)
+	if s == "" {
+		return "Exercise"
+	}
+	parts := strings.Split(s, "_")
+	for i, p := range parts {
+		if p == "" {
+			continue
+		}
+		// Keep purely numeric segments as-is (e.g., "110")
+		isDigits := true
+		for _, r := range p {
+			if r < '0' || r > '9' {
+				isDigits = false
+				break
+			}
+		}
+		if isDigits {
+			parts[i] = p
+			continue
+		}
+		upper := strings.ToUpper(p)
+		switch upper {
+		case "JSON", "XML", "HTTP", "CLI", "KV", "ID", "URL", "IO":
+			parts[i] = upper
+		default:
+			parts[i] = strings.ToUpper(p[:1]) + strings.ToLower(p[1:])
+		}
+	}
+	return strings.Join(parts, " ")
 }
 
 var ErrNoTemplates = errors.New("no templates found")
