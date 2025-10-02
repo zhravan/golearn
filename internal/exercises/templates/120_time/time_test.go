@@ -1,8 +1,9 @@
 package time
 
 import (
-	"testing"
-	"time"
+    "testing"
+    "time"
+    "github.com/zhravan/golearn/internal/exercises/templates/120_time/timeutils"
 )
 
 // Helper to quickly create a date
