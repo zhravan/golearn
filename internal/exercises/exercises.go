@@ -133,7 +133,7 @@ func Get(slug string) (Exercise, error) {
 		)
 		return Exercise{
 			Slug:      slug,
-				Title:     formatSlugAsTitle(slug), // e.g., "110 Recover"
+			Title:     formatSlugAsTitle(slug), // e.g., "110 Recover"
 			TestRegex: ".*",
 			Hints:     []string{"This exercise is missing proper catalog metadata. Check documentation."},
 		}, nil
