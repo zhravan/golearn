@@ -29,12 +29,10 @@ title: Home
   <h2>Quick Start</h2>
   <ol>
     <li>Install Go 1.22+</li>
-    <li>Clone the repository</li>
+    <li>Install the CLI</li>
     <li>Run your first exercise</li>
   </ol>
   
-  <pre><code>git clone https://github.com/your-username/golearn.git
-cd golearn
-go build -o bin/golearn ./cmd/golearn
-./bin/golearn verify 01_hello</code></pre>
+  <pre><code>go install github.com/zhravan/golearn/cmd/golearn@latest
+golearn verify 01_hello</code></pre>
 </div>
