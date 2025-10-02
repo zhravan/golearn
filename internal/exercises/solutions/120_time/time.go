@@ -14,9 +14,15 @@ func FormatDateTime(t time.Time) string {
 
 // DaysBetween returns the number of days between two dates.
 // Positive if end > start, negative if end < start.
+//
+// Note: This implementation divides the duration by 24 hours. 
+// When dates span a daylight saving time (DST) transition, the result 
+// may be off by ±1 hour. For exact day counts across DST, consider 
+// normalizing both dates to UTC or comparing date components at midnight.
 func DaysBetween(start, end time.Time) int {
 	return int(end.Sub(start).Hours() / 24)
 }
+
 
 // AddDays adds a specified number of days to a date and returns the new date.
 func AddDays(t time.Time, days int) time.Time {
