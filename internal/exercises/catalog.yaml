@@ -192,20 +192,16 @@ projects:
     - Implement MarshalPerson to convert a struct into JSON using json.Marshal.
     - Implement UnmarshalPerson to convert a JSON string into a struct using json.Unmarshal.
     - Handle and return errors properly in both functions.
-
 - slug: 109_epoch
   title: "Epoch Conversion"
-  difficulty: beginner
-  topics: ["time", "epoch", "unix"]
+  test_regex: ".*"
   hints:
     - "Use Go's `time.Unix()` to convert an epoch to time."
     - "Use `t.Unix()` to convert time back to epoch."
     - "Remember Go’s `time.Parse` can help parse date strings."
-
 - slug: 110_recover
   title: Safe Panic Recovery
-  difficulty: medium
-  topics: ["panic", "recover", "defer"]
+  test_regex: ".*"
   hints:
     - hint_type: concept
       text: The `recover()` function is ONLY useful inside a function that is executed by a `defer` statement. Outside of a deferred function, `recover` will return `nil` and have no effect.
