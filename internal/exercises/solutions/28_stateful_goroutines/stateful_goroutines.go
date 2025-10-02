@@ -22,7 +22,7 @@ func NewCounter() *Counter {
 		reads:  make(chan readOp),
 		writes: make(chan writeOp),
 	}
-	
+
 	// Start the state-owning goroutine
 	go func() {
 		var state int
@@ -36,7 +36,7 @@ func NewCounter() *Counter {
 			}
 		}
 	}()
-	
+
 	return c
 }
 
