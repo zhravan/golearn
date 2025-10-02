@@ -34,9 +34,9 @@ title: Contributing
   <h2>Creating Exercises</h2>
   <p>Each exercise needs:</p>
   <ul>
-    <li>Template file (incomplete code for students)</li>
+    <li>Template file (incomplete code for learners to complete)</li>
     <li>Test file (verification tests)</li>
-    <li>Solution file (complete implementation)</li>
+    <li>Solution file (complete implementation, base code is already in place which will run the test cases written for template to picked for solutions as well)</li>
     <li>Catalog entry in <code>catalog.yaml</code></li>
   </ul>
 </div>
@@ -53,13 +53,14 @@ title: Contributing
 
 <div class="gopher-card">
   <h2>Testing</h2>
-  <p>Before submitting your changes:</p>
-  <pre><code># Run all tests
-go test ./...
+  <p>Before submitting your changes, build locally and verify exercises using the CLI:</p>
+  <pre><code># Build the CLI
+go build -o bin/golearn ./cmd/golearn
+chmod +x bin/golearn
 
-# Test exercises
+# Verify template exercises (incomplete templates should fail)
 ./bin/golearn verify
 
-# Test with solutions
+# Verify a specific exercise with its solution (should pass)
 ./bin/golearn verify 01_hello --solution</code></pre>
 </div>

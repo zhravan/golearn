@@ -26,8 +26,8 @@ title: About
 <div class="gopher-card">
   <h2>Features</h2>
   <ul>
-    <li>37 concept exercises covering Go fundamentals</li>
-    <li>9 project exercises for real applications</li>
+    <li>Concept exercises covering Go fundamentals</li>
+    <li>Project exercises for real applications</li>
     <li>Progressive difficulty levels</li>
     <li>Instant feedback and verification</li>
     <li>Hints and solutions when needed</li>
