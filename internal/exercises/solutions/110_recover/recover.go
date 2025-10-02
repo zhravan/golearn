@@ -1,6 +1,9 @@
 package recover_exercise
 
 // DoWork simulates a function that might panic if the input is negative.
+//
+// It is designed to be called by Run, which should demonstrate
+// how to safely handle the panic using recover().
 func DoWork(n int) {
 	if n < 0 {
 		// A panic occurs if n is negative
