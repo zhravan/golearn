@@ -58,8 +58,8 @@ golearn --help</code></pre>
     <li>Fork and clone the repo, create a feature branch</li>
     <li>Build the CLI locally: <code>go build -o bin/golearn ./cmd/golearn && chmod +x bin/golearn</code></li>
     <li>Develop your exercise/update under <code>internal/exercises</code></li>
-    <li>Verify templates (incomplete templates should fail): <code>./bin/golearn verify</code></li>
-    <li>Verify specific exercise with solution (should pass): <code>./bin/golearn verify 01_hello --solution</code></li>
+    <li>Verify templates (incomplete templates should fail): <code>golearn verify</code></li>
+    <li>Verify specific exercise with solution (should pass): <code>golearn verify 01_hello --solution</code></li>
     <li>Run auxiliary checks locally: <code>go fmt ./...</code> and <code>go vet ./...</code></li>
     <li>Open a Pull Request</li>
   </ol>
@@ -88,15 +88,15 @@ golearn --help</code></pre>
       <tr>
         <td><code>golearn --help</code></td>
         <td>Show help and available commands</td>
-        <td><code>./bin/golearn --help</code></td>
+        <td><code>golearn --help</code></td>
       </tr>
       <tr>
         <td><code>golearn list</code></td>
         <td>List all available exercises</td>
-        <td><code>./bin/golearn list</code></td>
+        <td><code>golearn list</code></td>
       </tr>
       <tr>
-        <td><code>./bin/golearn verify [exercise]</code></td>
+        <td><code>golearn verify [exercise]</code></td>
         <td>Verify all templates or a specific exercise</td>
         <td>
           <div><code>golearn verify</code></div>
@@ -104,44 +104,44 @@ golearn --help</code></pre>
         </td>
       </tr>
       <tr>
-        <td><code>./bin/golearn verify [exercise] --solution</code></td>
+        <td><code>golearn verify [exercise] --solution</code></td>
         <td>Verify using the reference solution (should pass)</td>
         <td><code>golearn verify 01_hello --solution</code></td>
       </tr>
       <tr>
-        <td><code>./bin/golearn hint [exercise]</code></td>
+        <td><code>golearn hint [exercise]</code></td>
         <td>Show hints for a specific exercise</td>
         <td><code>golearn hint 01_hello</code></td>
       </tr>
       <tr>
-        <td><code>./bin/golearn solution [exercise]</code></td>
+        <td><code>golearn solution [exercise]</code></td>
         <td>View the reference solution (may prompt for confirmation)</td>
         <td><code>golearn solution 01_hello</code></td>
       </tr>
       <tr>
         <td><code>golearn progress</code></td>
         <td>Display your overall progress</td>
-        <td><code>./bin/golearn progress</code></td>
+        <td><code>golearn progress</code></td>
       </tr>
       <tr>
-        <td><code>./bin/golearn reset [exercise]</code></td>
+        <td><code>golearn reset [exercise]</code></td>
         <td>Reset an exercise to its starter template</td>
         <td><code>golearn reset 01_hello</code></td>
       </tr>
       <tr>
         <td><code>golearn init</code></td>
         <td>Initialize local exercise templates</td>
-        <td><code>./bin/golearn init</code></td>
+        <td><code>golearn init</code></td>
       </tr>
       <tr>
-        <td><code>./bin/golearn publish [--dry-run]</code></td>
+        <td><code>golearn publish [--dry-run]</code></td>
         <td>Run publish routine (use <code>--dry-run</code> to preview)</td>
         <td><code>golearn publish --dry-run</code></td>
       </tr>
       <tr>
         <td><code>golearn watch</code></td>
         <td>Watch files and re-verify on changes</td>
-        <td><code>./bin/golearn watch</code></td>
+        <td><code>golearn watch</code></td>
       </tr>
     </tbody>
   </table>
