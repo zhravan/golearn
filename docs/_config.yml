@@ -5,8 +5,9 @@ title: GoLearn
 description: "Learn Go the fun way! A Rustlings-style interactive Go tutorial with gopher-powered exercises."
 author: "GoLearn Team"
 email: "golearn@example.com"
-url: "https://golearn.dev"
-baseurl: ""
+# For project pages hosted at https://<user>.github.io/<repo>
+url: "https://zhravan.github.io"
+baseurl: "/golearn"
 
 # Jekyll configuration
 markdown: kramdown
@@ -53,13 +54,13 @@ header_pages:
 
 # Gopher theme settings
 gopher_theme:
-  primary_color: "#00ADD8"  # Go blue
-  secondary_color: "#5DC9E2"  # Light blue
-  accent_color: "#FF6B6B"  # Fun red
-  text_color: "#2D3748"  # Dark gray
-  background_color: "#F7FAFC"  # Light gray
-  
+  primary_color: "#00ADD8" # Go blue
+  secondary_color: "#5DC9E2" # Light blue
+  accent_color: "#FF6B6B" # Fun red
+  text_color: "#2D3748" # Dark gray
+  background_color: "#F7FAFC" # Light gray
+
 # Social links (optional)
 social:
-  github: "your-username/golearn"
-  twitter: "golearn_dev"
+  github: "zhravan/golearn"
+  twitter: "zhravan"

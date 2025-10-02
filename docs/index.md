@@ -8,8 +8,8 @@ title: Home
   <p>Learn Go through interactive exercises. A Rustlings-style tutorial for the Go programming language.</p>
   
   <div style="text-align: center; margin: 30px 0;">
-    <a href="/getting-started" class="gopher-btn gopher-btn-primary">Get Started</a>
-    <a href="/exercises" class="gopher-btn gopher-btn-secondary">Browse Exercises</a>
+    <a href="{{ '/getting-started' | relative_url }}" class="gopher-btn gopher-btn-primary">Get Started</a>
+    <a href="{{ '/exercises' | relative_url }}" class="gopher-btn gopher-btn-secondary">Browse Exercises</a>
   </div>
 </div>
 
