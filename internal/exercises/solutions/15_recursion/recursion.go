@@ -2,6 +2,9 @@ package recursion
 
 // factorial returns the factorial of n using recursion
 func factorial(n int) int {
+	if n < 0 {
+		panic("factorial: negative input not supported")
+	}
 	if n == 0 {
 		return 1
 	}
