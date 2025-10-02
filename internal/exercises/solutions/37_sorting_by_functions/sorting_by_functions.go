@@ -45,10 +45,10 @@ func SortByName(people []Person) []Person {
 	// Create a copy of the slice to avoid modifying the original
 	result := make([]Person, len(people))
 	copy(result, people)
-	
+
 	// Sort the copy by name
 	sort.Sort(ByName(result))
-	
+
 	return result
 }
 
@@ -57,9 +57,9 @@ func SortByAge(people []Person) []Person {
 	// Create a copy of the slice to avoid modifying the original
 	result := make([]Person, len(people))
 	copy(result, people)
-	
+
 	// Sort the copy by age
 	sort.Sort(ByAge(result))
-	
+
 	return result
 }
