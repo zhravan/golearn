@@ -1,0 +1,39 @@
+name: Enforce PR Labels
+
+on:
+  pull_request:
+    types: [opened, synchronize, labeled, unlabeled]
+
+jobs:
+  check-labels:
+    name: Check required PR labels
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    steps:
+      - name: Validate labels
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const required = ['patch', 'minor', 'major'];
+            const pr = context.payload.pull_request;
+
+            if (!pr) {
+              core.setFailed('This workflow only runs on pull_request events.');
+              return;
+            }
+
+            const labels = (pr.labels || [])
+              .map(l => (typeof l === 'string' ? l : l.name))
+              .filter(Boolean)
+              .map(n => n.toLowerCase());
+
+            const hasRequired = required.some(r => labels.includes(r));
+
+            if (!hasRequired) {
+              core.setFailed('PR must have one of the labels: patch, minor, major.');
+            } else {
+              core.info(`PR has required label(s): ${labels.filter(l => required.includes(l)).join(', ')}`);
+            }
+
+
