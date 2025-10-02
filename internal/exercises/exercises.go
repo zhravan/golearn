@@ -124,6 +124,15 @@ func Get(slug string) (Exercise, error) {
 			return ex, nil
 		}
 	}
+	// Fallback: if an embedded template or solution exists, synthesize an Exercise entry
+	if templateExists(slug) || SolutionExists(slug) {
+		return Exercise{
+			Slug:      slug,
+			Title:     slug,
+			TestRegex: ".*",
+			Hints:     nil,
+		}, nil
+	}
 	return Exercise{}, fmt.Errorf("exercise not found: %s", slug)
 }
 
