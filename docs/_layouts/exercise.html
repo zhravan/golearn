@@ -1,0 +1,50 @@
+---
+layout: default
+---
+
+<article class="gopher-exercise">
+  <header class="gopher-exercise-header">
+    <div class="gopher-exercise-info">
+      <h1>{{ page.title }}</h1>
+      <p class="gopher-exercise-description">{{ page.description }}</p>
+      <div class="gopher-exercise-meta">
+        <span class="gopher-difficulty difficulty-{{ page.difficulty | default: 'beginner' }}">
+          {{ page.difficulty | default: 'Beginner' | capitalize }}
+        </span>
+        {% if page.topics %}
+          <div class="gopher-topics">
+            {% for topic in page.topics %}
+              <span class="gopher-topic">{{ topic }}</span>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </header>
+
+  <div class="gopher-exercise-content">
+    {{ content }}
+  </div>
+
+  {% if page.hints %}
+    <div class="gopher-hints">
+      <h3>Hints</h3>
+      <ul>
+        {% for hint in page.hints %}
+          <li>{{ hint }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  <div class="gopher-exercise-actions">
+    <a href="{{ site.social.github | prepend: 'https://github.com/' }}/blob/main/internal/exercises/templates/{{ page.slug }}" 
+       class="gopher-btn gopher-btn-primary">
+      View Template
+    </a>
+    <a href="{{ site.social.github | prepend: 'https://github.com/' }}/blob/main/internal/exercises/solutions/{{ page.slug }}" 
+       class="gopher-btn gopher-btn-secondary">
+      View Solution
+    </a>
+  </div>
+</article>

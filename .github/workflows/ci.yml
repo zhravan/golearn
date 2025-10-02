@@ -1,0 +1,196 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.22'
+        
+    - name: Cache Go modules
+      uses: actions/cache@v3
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+          
+    - name: Install dependencies
+      run: go mod download
+      
+    - name: Run go vet
+      run: go vet ./...
+      
+    - name: Check formatting
+      run: |
+        if [ "$(gofmt -l .)" != "" ]; then
+          echo "Code is not formatted. Run 'go fmt ./...' to fix."
+          gofmt -l .
+          exit 1
+        fi
+        
+    - name: Build application
+      run: |
+        go build -o bin/golearn ./cmd/golearn
+        chmod +x bin/golearn
+        
+    - name: Test build works
+      run: |
+        ./bin/golearn --help
+        ./bin/golearn help
+        
+    - name: Test list command
+      run: |
+        ./bin/golearn list
+        
+    - name: Test progress command
+      run: |
+        ./bin/golearn progress
+        
+    - name: Test hint command (with valid exercise)
+      run: |
+        ./bin/golearn hint 01_hello || true
+        
+    - name: Test solution command (with valid exercise)
+      run: |
+        echo "n" | ./bin/golearn solution 01_hello
+        
+    - name: Test verify command (templates should fail)
+      run: |
+        echo "Testing that template exercises fail as expected..."
+        if ./bin/golearn verify; then
+          echo "FAILURE: Template exercises should fail but they passed - this indicates templates are complete when they should be incomplete for students to fill in"
+          exit 1
+        else
+          echo "SUCCESS: Template exercises failed as expected - templates are properly incomplete for student learning"
+        fi
+        
+    - name: Test verify command with solutions (should pass)
+      run: |
+        echo "Testing that solution exercises pass..."
+        # Test a few key exercises with their solutions
+        ./bin/golearn verify 01_hello --solution
+        ./bin/golearn verify 36_json --solution
+        ./bin/golearn verify 37_xml --solution
+        
+    - name: Test specific template exercises (should fail)
+      run: |
+        echo "Testing that specific template exercises fail as expected..."
+        failed_templates=()
+        
+        # Test a few key template exercises to ensure they fail
+        for exercise in 01_hello 02_values 36_json 37_xml; do
+          echo "Testing template exercise: $exercise"
+          if ./bin/golearn verify "$exercise"; then
+            echo "ERROR: Template $exercise should fail but passed - this template is complete when it should be incomplete for students to learn from"
+            failed_templates+=("$exercise")
+          else
+            echo "SUCCESS: Template $exercise failed as expected - template is properly incomplete for student learning"
+          fi
+        done
+        
+        # Report results
+        if [ ${#failed_templates[@]} -eq 0 ]; then
+          echo "SUCCESS: All tested template exercises failed as expected - templates are properly incomplete for student learning"
+        else
+          echo "FAILURE: The following template exercises should have failed but passed - these templates are complete when they should be incomplete:"
+          for exercise in "${failed_templates[@]}"; do
+            echo "  - $exercise"
+          done
+          exit 1
+        fi
+        
+    - name: Test reset command
+      run: |
+        ./bin/golearn reset 01_hello
+        
+    - name: Test init command (built-in templates)
+      run: |
+        ./bin/golearn init
+        
+    - name: Test error handling
+      run: |
+        # Test invalid commands
+        ./bin/golearn invalid-command || true
+        ./bin/golearn hint || true
+        ./bin/golearn solution || true
+        ./bin/golearn reset || true
+        
+    - name: Test theme options
+      run: |
+        ./bin/golearn --no-color list
+        ./bin/golearn --theme=high-contrast list
+        ./bin/golearn --theme=monochrome list
+        
+    - name: Test publish dry-run
+      run: |
+        ./bin/golearn publish --dry-run
+      
+    - name: Run exercise tests
+      run: |
+        echo "Running go tests for non-template exercise packages..."
+        packages=$(go list ./internal/exercises/... | grep -v '/templates')
+        if [ -n "$packages" ]; then
+          go test $packages
+        else
+          echo "No non-template packages to test."
+        fi
+      
+    - name: Test ALL exercise solutions (comprehensive)
+      run: |
+        echo "Testing ALL solution exercises to ensure they pass..."
+        failed_exercises=()
+        
+        echo "Discovering exercises that actually have solution implementations..."
+        exercises_to_test=()
+        for dir in ./internal/exercises/solutions/*; do
+          [ -d "$dir" ] || continue
+          if ls "$dir"/*.go >/dev/null 2>&1; then
+            exercises_to_test+=("$(basename "$dir")")
+          fi
+        done
+
+        if [ ${#exercises_to_test[@]} -eq 0 ]; then
+          echo "No solution exercises found to test. Skipping."
+        else
+          for exercise in "${exercises_to_test[@]}"; do
+            echo "Testing solution exercise: $exercise"
+            if ./bin/golearn verify "$exercise" --solution; then
+              echo "PASS: $exercise"
+            else
+              echo "FAIL: $exercise - solution implementation is broken or incomplete"
+              failed_exercises+=("$exercise")
+            fi
+          done
+
+          if [ ${#failed_exercises[@]} -eq 0 ]; then
+            echo "SUCCESS: All solution exercises passed - all solutions are working correctly"
+          else
+            echo "FAILURE: The following solution exercises failed - these solutions need to be fixed:"
+            for exercise in "${failed_exercises[@]}"; do
+              echo "  - $exercise"
+            done
+            exit 1
+          fi
+        fi
+        
+    - name: Verify binary works in different directory
+      run: |
+        cd /tmp
+        $GITHUB_WORKSPACE/bin/golearn --help
+        
+    - name: Test watch command (timeout after 5 seconds)
+      run: |
+        timeout 5s ./bin/golearn watch || true
