@@ -1,18 +1,22 @@
 package string_formatting
 
-import "fmt"
-
 func FormatName() string {
 	// TODO: format the name as a string
-	return fmt.Sprintf("Name: ", "\"John\"")
+	// Follow the format of "Name: John"
+	// Name value is \"John\"
+	return ""
 }
 
 func FormatAge() string {
 	// TODO: format the age as a digit
-	return fmt.Sprintf("Age: ", 17)
+	// Follow the format of "Age: 17"
+	// Age value is 17
+	return ""
 }
 
 func FormatGpa() string {
 	// TODO: format the GPA for floating point number with 2 decimal places
-	return fmt.Sprintf("GPA: ", 3.75)
+	// Follow the format of "GPA: 3.75"
+	// GPA value is 3.75
+	return ""
 }

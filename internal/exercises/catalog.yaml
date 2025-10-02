@@ -163,7 +163,7 @@ concepts:
   title: String Formatting
   test_regex: ".*"
   hints:
-    - Use `%s`, `%d`, and `%f` to format strings, integers, and floats.
+    - Use `fmt.Sprintf` and `%s`, `%d`, `%f` formatting directives to format strings, integers, and floats.
 
 - slug: 37_xml
   title: XML Encoding and Decoding
