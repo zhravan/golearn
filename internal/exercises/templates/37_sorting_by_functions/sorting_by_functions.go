@@ -1,6 +1,6 @@
 package sorting_by_functions
 
-import "sort"
+// import sort package
 
 // TODO:
 // - Implement the sort.Interface methods for ByName and ByAge
