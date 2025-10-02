@@ -134,6 +134,14 @@ concepts:
   test_regex: ".*"
   hints:
     - Define a custom error type and return it from a function.
+- slug: 28_stateful_goroutines
+  title: Stateful Goroutines
+  test_regex: ".*"
+  hints:
+    - Use channels to send read and write operations to a state-owning goroutine.
+    - Create readOp and writeOp structs with response channels.
+    - The state-owning goroutine uses select to handle operations from channels.
+    - This pattern avoids mutexes by ensuring only one goroutine accesses shared state.
 - slug: 37_xml
   title: XML Encoding and Decoding
   test_regex: ".*"
