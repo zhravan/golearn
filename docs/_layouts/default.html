@@ -9,7 +9,7 @@
   <title>{% if page.title %}{{ page.title | escape }} - {% endif %}{{ site.title | escape }}</title>
   
   <link rel="stylesheet" href="{{ '/assets/css/gopher-theme.css' | relative_url }}">
-  <link rel="canonical" href="{{ page.url | absolute_url }}">
+  <link rel="canonical" href="{{ page.url | relative_url | absolute_url }}">
   <link rel="alternate" type="application/rss+xml" title="{{ site.title | escape }}" href="{{ '/feed.xml' | relative_url }}">
   
   {% seo %}
