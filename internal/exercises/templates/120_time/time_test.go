@@ -4,7 +4,7 @@ import (
     "testing"
     "time"
 
-    "github.com/zhravan/golearn/internal/exercises/templates/120_time/timeutils"
+    timeutils "github.com/zhravan/golearn/internal/exercises/templates/120_time"
 )
 
 // Helper to quickly create a date
