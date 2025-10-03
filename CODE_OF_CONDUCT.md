@@ -18,7 +18,7 @@ We as members, contributors, and leaders pledge to make participation in our com
 
 ## Enforcement
 
-Report unacceptable behavior to the maintainers at: <mrshravankumarb@gmail.com>.
+Report unacceptable behavior to the maintainers at: [shravan@ohmyscript.com](shravan@ohmyscript.com)
 
 Project maintainers are responsible for clarifying and enforcing standards of acceptable behavior and will take appropriate and fair corrective action.
 
