@@ -1,4 +1,4 @@
-// regular-expressions.go
+// regular_expressions.go
 // Exercise: Regular Expressions
 // Implement the function to match a string against a regular expression pattern.
 

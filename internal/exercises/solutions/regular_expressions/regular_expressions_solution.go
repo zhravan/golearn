@@ -1,4 +1,4 @@
-// regular-expressions_solution.go
+// regular_expressions_solution.go
 // Solution for: Regular Expressions
 package solution
 
