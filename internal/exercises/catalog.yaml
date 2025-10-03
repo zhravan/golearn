@@ -134,6 +134,12 @@ concepts:
   test_regex: ".*"
   hints:
     - Define a custom error type and return it from a function.
+- slug: 28_defer
+  title: Defer
+  test_regex: ".*"
+  hints:
+    - Use `f.close()` with `defer` keyword.
+    
 - slug: 37_xml
   title: XML Encoding and Decoding
   test_regex: ".*"
