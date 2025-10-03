@@ -220,3 +220,12 @@ projects:
   hints:
     - "Use time.Format with layout \"2006-01-02\""
     - "Subtract two times to get a Duration, then convert to hours and divide by 24"
+- slug: 38_time_formatting
+  title: "Time Formatting"
+  difficulty: beginner
+  topics: ["time", "formatting", "parsing"]
+  hints:
+      - "Use time.Now().Format() to format current time with a specific layout"
+      - "Use time.Parse() to parse time strings with known layouts"
+      - "Use time.LoadLocation() to work with different timezones"
+      - "Extract time components using .Date() and .Clock() methods"
