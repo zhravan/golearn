@@ -4,8 +4,6 @@ import (
 	"sync"
 )
 
-// TODO: Implement these functions so tests pass
-
 // The waitGroup in Go is used to wait for a collection of goroutines to finish executing
 
 func worker(wg *sync.WaitGroup, result *string) {

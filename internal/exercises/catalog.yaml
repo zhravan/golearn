@@ -202,10 +202,12 @@ projects:
     - "Use `t.Unix()` to convert time back to epoch."
     - "Remember Go’s `time.Parse` can help parse date strings."
 
-- slug: 37_waitGroup
+- slug: 38_waitgroup
   title: "WaitGroups"
   difficulty: beginner
-  topics: ["waitGroup", "go"]
+  topics: ["concurrency", "sync", "goroutines", "waitgroup"]
   hints:
-    - "Use Go's waitGroups inorder to wait for the goroutines"
+    - "Use sync.WaitGroup to wait for goroutines."
+    - "Call wg.Add(n) before starting n goroutines; each must call wg.Done()."
+    - "Call wg.Wait() in the parent to block until completion."
 

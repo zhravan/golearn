@@ -2,7 +2,7 @@ package waitgroup
 
 import "testing"
 
-func TestHello(t *testing.T) {
+func TestWaitGroup(t *testing.T) {
 	got := waitGroup()
 	want := "Worker done"
 	if got != want {
