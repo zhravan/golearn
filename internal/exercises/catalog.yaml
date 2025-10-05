@@ -134,6 +134,11 @@ concepts:
   test_regex: ".*"
   hints:
     - Define a custom error type and return it from a function.
+- slug: 29_go_routines
+  title: Go Routines
+  test_regex: ".*"
+  hints:
+    - Use `go` keyword to execute functions concurrently using go routines.
 - slug: 37_xml
   title: XML Encoding and Decoding
   test_regex: ".*"
