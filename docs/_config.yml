@@ -1,0 +1,66 @@
+# GoLearn Documentation Site
+# A fun, gopher-themed Jekyll site for Go learning
+
+title: GoLearn
+description: "Learn Go the fun way! A Rustlings-style interactive Go tutorial with gopher-powered exercises."
+author: "GoLearn Team"
+email: "golearn@example.com"
+# For project pages hosted at https://<user>.github.io/<repo>
+url: "https://zhravan.github.io"
+baseurl: "/golearn"
+
+# Jekyll configuration
+markdown: kramdown
+highlighter: rouge
+theme: minima
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+
+# Site settings
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - README.md
+  - vendor/
+
+# Collections
+collections:
+  exercises:
+    output: true
+    permalink: /:name/
+
+# Default layouts
+defaults:
+  - scope:
+      path: ""
+      type: "pages"
+    values:
+      layout: "default"
+  - scope:
+      path: ""
+      type: "exercises"
+    values:
+      layout: "exercise"
+
+# Navigation
+header_pages:
+  - index.md
+  - getting-started.md
+  - exercises.md
+  - contributing.md
+  - about.md
+
+# Gopher theme settings
+gopher_theme:
+  primary_color: "#00ADD8" # Go blue
+  secondary_color: "#5DC9E2" # Light blue
+  accent_color: "#FF6B6B" # Fun red
+  text_color: "#2D3748" # Dark gray
+  background_color: "#F7FAFC" # Light gray
+
+# Social links (optional)
+social:
+  github: "zhravan/golearn"
+  twitter: "zhravan"
