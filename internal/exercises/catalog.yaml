@@ -134,6 +134,11 @@ concepts:
   test_regex: ".*"
   hints:
     - Define a custom error type and return it from a function.
+- slug: 33_string_formatting
+  title: String Formatting
+  test_regex: ".*"
+  hints:
+    - Use `fmt.Sprintf` and `%s`, `%d`, `%f` formatting directives to format strings, integers, and floats.
 - slug: 37_xml
   title: XML Encoding and Decoding
   test_regex: ".*"
