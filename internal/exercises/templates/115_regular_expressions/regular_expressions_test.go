@@ -1,6 +1,8 @@
-package templates
+package regular_expressions
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestMatchRegex(t *testing.T) {
 	tests := []struct {

@@ -1,8 +1,10 @@
 // regular_expressions_solution.go
 // Solution for: Regular Expressions
-package solution
+package regular_expressions
 
-import "regexp"
+import (
+	"regexp"
+)
 
 // MatchRegex returns true if the input matches the pattern, false otherwise.
 func MatchRegex(pattern, input string) bool {
