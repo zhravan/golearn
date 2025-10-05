@@ -134,6 +134,21 @@ concepts:
   test_regex: ".*"
   hints:
     - Define a custom error type and return it from a function.
+- slug: 28_defer
+  title: Defer
+  test_regex: ".*"
+  hints:
+    - Use `f.Close()` with `defer` keyword.
+- slug: 29_go_routines
+  title: Go Routines
+  test_regex: ".*"
+  hints:
+    - Use `go` keyword to execute functions concurrently using go routines.
+- slug: 30_channels
+  title: Channels
+  test_regex: ".*"
+  hints:
+    - Use `make(chan T)` to create a channel and `<-` to send and receive on it.
 - slug: 33_string_formatting
   title: String Formatting
   test_regex: ".*"
