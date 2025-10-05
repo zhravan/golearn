@@ -138,7 +138,7 @@ concepts:
   title: Defer
   test_regex: ".*"
   hints:
-    - Use `f.close()` with `defer` keyword.
+    - Use `f.Close()` with `defer` keyword.
 - slug: 37_xml
   title: XML Encoding and Decoding
   test_regex: ".*"
