@@ -1,4 +1,4 @@
-package panicex
+package exercises
 
 import (
 	"strings"
@@ -6,32 +6,37 @@ import (
 )
 
 func TestCausePanic(t *testing.T) {
-	defer func() {
-		if r := recover(); r != nil {
+	t.Run("Positive Input", func(t *testing.T) {
+		result := CausePanic(5)
+		if result != 5 {
+			t.Errorf("CausePanic(5) = %d, want 5", result)
 		}
-	}()
+	})
 
-	result := CausePanic(5)
-	if result != 0 {
-		t.Errorf("Expected 0 or panic, got %d", result)
-	}
+	t.Run("Negative Input", func(t *testing.T) {
+		defer func() {
+			if r := recover(); r == nil {
+				t.Errorf("CausePanic(-3) should panic, but didn't")
+			}
+		}()
+		CausePanic(-3)
+	})
 }
 
 func TestSafeDivision(t *testing.T) {
-	result := SafeDivision(10, 2)
+	t.Run("Normal Division", func(t *testing.T) {
+		result := SafeDivision(10, 2)
+		if result != 5 {
+			t.Errorf("SafeDivision(10, 2) = %d, want 5", result)
+		}
+	})
 
-	if result == 0 {
-		return
-	}
-
-	if result != 5 {
-		t.Errorf("SafeDivision(10, 2) = %d, want 5", result)
-	}
-
-	result = SafeDivision(10, 0)
-	if result != 0 {
-		t.Errorf("SafeDivision(10, 0) = %d, want 0 (safe recovery)", result)
-	}
+	t.Run("Division By Zero", func(t *testing.T) {
+		result := SafeDivision(10, 0)
+		if result != 0 {
+			t.Errorf("SafeDivision(10, 0) = %d, want 0 (safe recovery)", result)
+		}
+	})
 }
 
 func TestTriggerMultiplePanics(t *testing.T) {
@@ -39,11 +44,18 @@ func TestTriggerMultiplePanics(t *testing.T) {
 	results := TriggerMultiplePanics(nums)
 
 	if results == nil {
+		t.Log("Placeholder implementation detected")
 		return
 	}
 
 	if len(results) != len(nums) {
 		t.Errorf("Expected %d results, got %d", len(nums), len(results))
+	}
+
+	for i, num := range nums {
+		if num < 0 && results[i] == "" {
+			t.Errorf("Expected non-empty result (recovery message) for negative number at index %d", i)
+		}
 	}
 }
 
