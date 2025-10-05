@@ -134,6 +134,11 @@ concepts:
   test_regex: ".*"
   hints:
     - Define a custom error type and return it from a function.
+- slug: 32_sorting
+  title: Sorting
+  test_regex: ".*"
+  hints:
+    - Use `slice.Sort` for sorting slices.
 - slug: 37_xml
   title: XML Encoding and Decoding
   test_regex: ".*"
