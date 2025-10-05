@@ -1,12 +1,12 @@
-package texttemplates
+package exercises
 
 import (
 	"bytes"
 	"text/template"
 )
 
-// RenderTemplate takes a template string and data map,returns the rendered string or error.
-func RenderTemplate(tmplStr string, data map[string]interface{}) (string, error) {
+// RenderTemplate takes a template string and data map, returns the rendered string or error.
+func RenderTemplate(tmplStr string, data map[string]any) (string, error) {
 	tmpl, err := template.New("exercise").Parse(tmplStr)
 	if err != nil {
 		return "", err
@@ -21,10 +21,10 @@ func RenderTemplate(tmplStr string, data map[string]interface{}) (string, error)
 	return buf.String(), nil
 }
 
-// FormatUserGreeting returns a greeting using text/template with users name
+// FormatUserGreeting returns a greeting using text/template with user's name
 func FormatUserGreeting(name string) (string, error) {
 	const greetingTmpl = "Hello, {{.Name}}!"
-	data := map[string]interface{}{
+	data := map[string]any{
 		"Name": name,
 	}
 	return RenderTemplate(greetingTmpl, data)
