@@ -251,3 +251,11 @@ projects:
       - "Use time.Parse() to parse time strings with known layouts"
       - "Use time.LoadLocation() to work with different timezones"
       - "Extract time components using .Date() and .Clock() methods"
+- slug: 40_text_templates
+  title: "Text Templates"
+  difficulty: beginner
+  topics: ["text/template", "strings", "formatting"]
+  hints:
+    - "Use Go's text/template package to create and execute templates."
+    - "Define template actions like {{.Field}} to inject data."
+    - "Use template functions like printf for formatting."
