@@ -134,6 +134,36 @@ concepts:
   test_regex: ".*"
   hints:
     - Define a custom error type and return it from a function.
+- slug: 28_defer
+  title: Defer
+  test_regex: ".*"
+  hints:
+    - Use `f.Close()` with `defer` keyword.
+- slug: 29_go_routines
+  title: Go Routines
+  test_regex: ".*"
+  hints:
+    - Use `go` keyword to execute functions concurrently using go routines.
+- slug: 30_channels
+  title: Channels
+  test_regex: ".*"
+  hints:
+    - Use `make(chan T)` to create a channel and `<-` to send and receive on it.
+- slug: 31_mutexes
+  title: Mutexes
+  test_regex: ".*"
+  hints:
+    - Use `sync.Mutex` to synchronize access to a shared resource.
+- slug: 32_sorting
+  title: Sorting
+  test_regex: ".*"
+  hints:
+    - Use `slice.Sort` for sorting slices.
+- slug: 33_string_formatting
+  title: String Formatting
+  test_regex: ".*"
+  hints:
+    - Use `fmt.Sprintf` and `%s`, `%d`, `%f` formatting directives to format strings, integers, and floats.
 - slug: 37_xml
   title: XML Encoding and Decoding
   test_regex: ".*"
@@ -211,3 +241,13 @@ projects:
       - "Create custom slice types like ByName and ByAge (e.g., type ByName []Person)"
       - "Use sort.Sort() to sort slices with your custom comparison logic"
       - "Remember to make copies of slices to avoid modifying the original"
+
+- slug: 38_time_formatting
+  title: "Time Formatting"
+  difficulty: beginner
+  topics: ["time", "formatting", "parsing"]
+  hints:
+      - "Use time.Now().Format() to format current time with a specific layout"
+      - "Use time.Parse() to parse time strings with known layouts"
+      - "Use time.LoadLocation() to work with different timezones"
+      - "Extract time components using .Date() and .Clock() methods"
