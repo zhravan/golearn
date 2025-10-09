@@ -164,6 +164,11 @@ concepts:
   test_regex: ".*"
   hints:
     - Use `fmt.Sprintf` and `%s`, `%d`, `%f` formatting directives to format strings, integers, and floats.
+- slug: 34_channel_buffering
+  title: Channel Buffering
+  test_regex: ".*"
+  hints:
+    - Use `make(chan T, N)` to create a buffered channel and `<-` to send and receive on it.
 - slug: 37_xml
   title: XML Encoding and Decoding
   test_regex: ".*"
