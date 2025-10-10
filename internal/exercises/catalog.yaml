@@ -169,6 +169,11 @@ concepts:
   test_regex: ".*"
   hints:
     - Use `make(chan T, N)` to create a buffered channel and `<-` to send and receive on it.
+- slug: 35_channel_sync
+  title: Channel Synchronization
+  test_regex: ".*"
+  hints:
+    - Use a buffered boolean channel and wait till go routine completes.
 - slug: 37_xml
   title: XML Encoding and Decoding
   test_regex: ".*"
