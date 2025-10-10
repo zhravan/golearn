@@ -178,6 +178,11 @@ concepts:
     - Send 50 jobs to the worker pool.
     - Receive results from the worker pool and store them in a `rs` slice.
     - Enforce type safety by specifying the channel directions in worker function.
+- slug: 35_channel_sync
+  title: Channel Synchronization
+  test_regex: ".*"
+  hints:
+    - Use a buffered boolean channel and wait till go routine completes.
 - slug: 37_xml
   title: XML Encoding and Decoding
   test_regex: ".*"
