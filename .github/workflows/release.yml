@@ -73,6 +73,7 @@ jobs:
           echo "next=$next" >> $GITHUB_OUTPUT
 
       - name: Create tag and release
+        id: create_release
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
           GH_TOKEN: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
@@ -80,20 +81,27 @@ jobs:
           next="${{ steps.next.outputs.next }}"
           echo "Creating release: $next"
           
-          # Create and push tag
-          git tag "$next"
-          git push origin "$next"
+          # Check if tag already exists
+          if git rev-parse "$next" >/dev/null 2>&1; then
+            echo "Tag $next already exists, skipping tag creation"
+          else
+            # Create and push tag
+            git tag "$next"
+            git push origin "$next"
+          fi
           
           # Create release with proper error handling
-          if gh release create "$next" --generate-notes; then
+          if gh release view "$next" >/dev/null 2>&1; then
+            echo "Release $next already exists, will update it"
+          elif gh release create "$next" --generate-notes; then
             echo "Release $next created successfully"
           else
-            echo "Failed to create release $next, but continuing..."
+            echo "Failed to create release $next"
             exit 1
           fi
 
       - name: Attach binaries (Linux/macOS)
-        if: success()
+        if: steps.create_release.outcome == 'success'
         env:
           GITHUB_TOKEN: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
           GH_TOKEN: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
@@ -103,16 +111,31 @@ jobs:
           
           # Build static binaries for common platforms
           mkdir -p dist
+          echo "Building binaries..."
           GOOS=linux GOARCH=amd64 go build -o dist/golearn-linux-amd64 ./cmd/golearn
           GOOS=darwin GOARCH=arm64 go build -o dist/golearn-darwin-arm64 ./cmd/golearn
           GOOS=darwin GOARCH=amd64 go build -o dist/golearn-darwin-amd64 ./cmd/golearn
           GOOS=windows GOARCH=amd64 go build -o dist/golearn-windows-amd64.exe ./cmd/golearn
           
-          # Upload binaries to the release
-          if gh release upload "$next" dist/* --clobber; then
-            echo "Binaries uploaded successfully"
-          else
-            echo "Failed to upload binaries"
-            exit 1
-          fi
+          echo "Binaries built successfully:"
+          ls -lh dist/
+          
+          # Upload binaries to the release with retry logic
+          max_attempts=3
+          attempt=1
+          while [ $attempt -le $max_attempts ]; do
+            echo "Attempt $attempt of $max_attempts to upload binaries..."
+            if gh release upload "$next" dist/* --clobber; then
+              echo "Binaries uploaded successfully"
+              exit 0
+            else
+              echo "Upload attempt $attempt failed"
+              if [ $attempt -eq $max_attempts ]; then
+                echo "Failed to upload binaries after $max_attempts attempts"
+                exit 1
+              fi
+              attempt=$((attempt+1))
+              sleep 2
+            fi
+          done
 

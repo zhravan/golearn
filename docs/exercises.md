@@ -56,7 +56,7 @@ title: Exercises
     <li>32_sorting - Sorting</li>
     <li>33_string_formatting - String Formatting</li>
     <li>34_channel_buffering - Channel Buffering</li>
-    <li>35_regex - Regular Expressions</li>
+    <li>41_regex - Regular Expressions</li>
     <li>36_json - JSON Processing</li>
     <li>37_xml - XML Processing</li>
   </ul>
