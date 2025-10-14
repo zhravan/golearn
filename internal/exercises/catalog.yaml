@@ -169,6 +169,11 @@ concepts:
   test_regex: ".*"
   hints:
     - Use `make(chan T, N)` to create a buffered channel and `<-` to send and receive on it.
+- slug: 35_channel_sync
+  title: Channel Synchronization
+  test_regex: ".*"
+  hints:
+    - Use a buffered boolean channel and wait till go routine completes.
 - slug: 39_channel_directions
   title: Channel Directions
   test_regex: ".*"
@@ -178,11 +183,18 @@ concepts:
     - Send 50 jobs to the worker pool.
     - Receive results from the worker pool and store them in a `rs` slice.
     - Enforce type safety by specifying the channel directions in worker function.
-- slug: 35_channel_sync
-  title: Channel Synchronization
+- slug: 41_regex
+  title: Regular Expressions
   test_regex: ".*"
   hints:
-    - Use a buffered boolean channel and wait till go routine completes.
+    - Use regexp.MustCompile to create compiled regular expressions.
+    - Use MatchString to test if a string matches a pattern.
+    - Use FindAllString to extract all matches from text.
+    - Use ReplaceAllString to replace matches with new text.
+    - "Email regex: ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+    - "Phone regex: ^\\(\\d{3}\\) \\d{3}-\\d{4}$"
+    - "Number regex: \\d+\\.?\\d*"
+    - "Vowel regex: [aeiouAEIOU]"
 - slug: 37_xml
   title: XML Encoding and Decoding
   test_regex: ".*"
