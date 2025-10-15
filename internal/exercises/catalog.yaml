@@ -197,6 +197,16 @@ concepts:
   hints:
     - Use `select` to handle multiple channel operations concurrently.
     - Use `time.After` to simulate a 5 microsecond timeout.
+- slug: 41_worker_pools
+  title: Worker Pools
+  test_regex: ".*"
+  hints:
+    - Create separate channels for jobs (send work) and results (receive processed data).
+    - Launch multiple worker goroutines that read from jobs channel and write to results channel.
+    - Use channel directions (<-chan for receive-only, chan<- for send-only) in worker function signature.
+    - Close the jobs channel after sending all work to signal workers to finish.
+    - Use strings.TrimSpace() to clean message strings by removing leading/trailing whitespace.
+    - Collect exactly len(logs) results to ensure all work is processed.
 projects:
 - slug: 101_text_analyzer
   title: Text Analyzer (Easy)
