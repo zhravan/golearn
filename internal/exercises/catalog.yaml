@@ -235,6 +235,15 @@ concepts:
     - "Phone regex: ^\\(\\d{3}\\) \\d{3}-\\d{4}$"
     - "Number regex: \\d+\\.?\\d*"
     - "Vowel regex: [aeiouAEIOU]"
+- slug: 42_string_functions
+  title: String Functions
+  test_regex: ".*"
+  hints:
+    - Use strings.Contains to check if a substring exists in a string.
+    - Use strings.HasPrefix and strings.HasSuffix for prefix/suffix checking.
+    - Use strings.Index to find the position of a substring.
+    - Use strings.ToUpper and strings.ToLower for case conversion.
+    - Use strings.TrimSpace to remove leading and trailing whitespace.
 projects:
 - slug: 101_text_analyzer
   title: Text Analyzer (Easy)
