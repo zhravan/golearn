@@ -11,7 +11,7 @@ import (
 
 // Embed the canonical solutions alongside templates. We do not expose these via CLI directly.
 //
-//go:embed solutions/**
+//go:embed all:solutions/**
 var solutionsFS embed.FS
 
 // SolutionExists reports whether we have an embedded solution for the given slug.
