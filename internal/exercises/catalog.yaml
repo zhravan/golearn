@@ -275,3 +275,14 @@ projects:
       - "Use time.Parse() to parse time strings with known layouts"
       - "Use time.LoadLocation() to work with different timezones"
       - "Extract time components using .Date() and .Clock() methods"
+
+- slug: 39_waitgroup
+  title: "WaitGroups"
+  difficulty: beginner
+  topics: ["concurrency", "sync", "goroutines", "waitgroup"]
+  hints:
+    - "Use sync.WaitGroup to wait for goroutines."
+    - "Call wg.Add(n) before starting n goroutines; each must call wg.Done()."
+    - "Call wg.Wait() in the parent to block until completion."
+
+
