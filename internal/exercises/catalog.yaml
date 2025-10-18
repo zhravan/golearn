@@ -134,6 +134,55 @@ concepts:
   test_regex: ".*"
   hints:
     - Define a custom error type and return it from a function.
+- slug: 28_defer
+  title: Defer
+  test_regex: ".*"
+  hints:
+    - Use `f.Close()` with `defer` keyword.
+- slug: 29_go_routines
+  title: Go Routines
+  test_regex: ".*"
+  hints:
+    - Use `go` keyword to execute functions concurrently using go routines.
+- slug: 30_channels
+  title: Channels
+  test_regex: ".*"
+  hints:
+    - Use `make(chan T)` to create a channel and `<-` to send and receive on it.
+- slug: 31_mutexes
+  title: Mutexes
+  test_regex: ".*"
+  hints:
+    - Use `sync.Mutex` to synchronize access to a shared resource.
+- slug: 32_sorting
+  title: Sorting
+  test_regex: ".*"
+  hints:
+    - Use `slice.Sort` for sorting slices.
+- slug: 33_string_formatting
+  title: String Formatting
+  test_regex: ".*"
+  hints:
+    - Use `fmt.Sprintf` and `%s`, `%d`, `%f` formatting directives to format strings, integers, and floats.
+- slug: 34_channel_buffering
+  title: Channel Buffering
+  test_regex: ".*"
+  hints:
+    - Use `make(chan T, N)` to create a buffered channel and `<-` to send and receive on it.
+- slug: 39_channel_directions
+  title: Channel Directions
+  test_regex: ".*"
+  hints:
+    - Create two channels, one for sending jobs and one for receiving results.
+    - Start 5 workers using go routines.
+    - Send 50 jobs to the worker pool.
+    - Receive results from the worker pool and store them in a `rs` slice.
+    - Enforce type safety by specifying the channel directions in worker function.
+- slug: 35_channel_sync
+  title: Channel Synchronization
+  test_regex: ".*"
+  hints:
+    - Use a buffered boolean channel and wait till go routine completes.
 - slug: 37_xml
   title: XML Encoding and Decoding
   test_regex: ".*"
@@ -142,7 +191,12 @@ concepts:
     - Add XML struct tags using `xml:"fieldname"` to map struct fields to XML elements.
     - Use xml.Marshal to convert structs to XML bytes.
     - Use xml.Unmarshal to parse XML bytes into structs.
-
+- slug: 40_channel_select
+  title: Channel Select
+  test_regex: ".*"
+  hints:
+    - Use `select` to handle multiple channel operations concurrently.
+    - Use `time.After` to simulate a 5 microsecond timeout.
 projects:
 - slug: 101_text_analyzer
   title: Text Analyzer (Easy)
