@@ -275,3 +275,12 @@ projects:
       - "Use time.Parse() to parse time strings with known layouts"
       - "Use time.LoadLocation() to work with different timezones"
       - "Extract time components using .Date() and .Clock() methods"
+
+- slug: 68_rate_limiting
+  title: Rate Limiting
+  test_regex: ".*"
+  hints:
+    - Implement a RateLimiter struct with a map to track timestamps per key.
+    - Use a mutex to handle concurrent access safely.
+    - Allow only N requests per interval; deny requests exceeding the limit.
+    - Optionally, implement a Reset method to clear a key's history.
