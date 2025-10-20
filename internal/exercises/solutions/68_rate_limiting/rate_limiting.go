@@ -15,6 +15,13 @@ type RateLimiter struct {
 
 // NewRateLimiter returns a new RateLimiter with the given limit and interval.
 func NewRateLimiter(limit int, interval time.Duration) *RateLimiter {
+	if limit <= 0 {
+		panic("limit must be positive")
+	}
+	if interval <= 0 {
+		panic("interval must be positive")
+	}
+
 	return &RateLimiter{
 		limit:      limit,
 		interval:   interval,
@@ -31,25 +38,27 @@ func (r *RateLimiter) Allow(key string) bool {
 	now := time.Now()
 	windowStart := now.Add(-r.interval)
 
-	// Filter out timestamps that are outside the allowed interval
-	validTimestamps := make([]time.Time, 0, len(r.timestamps[key]))
+	// Filter out timestamps outside the interval
+	validTimestamps := make([]time.Time, 0)
 	for _, t := range r.timestamps[key] {
 		if t.After(windowStart) {
 			validTimestamps = append(validTimestamps, t)
 		}
 	}
 
-	// Update the timestamps with only valid ones
-	r.timestamps[key] = validTimestamps
+	// Clean up keys if no valid timestamps remain
+	if len(validTimestamps) == 0 {
+		delete(r.timestamps, key)
+	} else {
+		r.timestamps[key] = validTimestamps
+	}
 
-	// Check if the current request is allowed
+	// Enforce limit
 	if len(validTimestamps) < r.limit {
-		// Add the current timestamp and allow the request
 		r.timestamps[key] = append(r.timestamps[key], now)
 		return true
 	}
 
-	// Otherwise, deny the request
 	return false
 }
 
