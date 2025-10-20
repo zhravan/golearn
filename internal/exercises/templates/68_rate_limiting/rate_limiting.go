@@ -1,17 +1,16 @@
 package rate_limiting
 
 import (
-	"errors"
 	"sync"
 	"time"
 )
 
 // TODO:
 // - Implement a simple RateLimiter that allows N requests per interval.
-// - Use a map[string][]time.Time to track timestamps of requests per key.
+// - Use a map[string][]time.Time to track request timestamps per key.
 // - Use a mutex to handle concurrent access safely.
-// - Implement Allow(key string) bool method returning true if allowed, false otherwise.
-// - Optionally, implement Reset(key string) error to clear a key's request history.
+// - Implement Allow(key string) bool to check if a request is allowed.
+// - Implement Reset(key string) to clear a key's request history.
 type RateLimiter struct {
 	mu         sync.Mutex
 	limit      int
@@ -19,20 +18,26 @@ type RateLimiter struct {
 	timestamps map[string][]time.Time
 }
 
-// NewRateLimiter should return a pointer to a new RateLimiter with initialized fields.
+// NewRateLimiter returns a new RateLimiter with the given limit and interval.
+// The timestamps map is initialized so learners can safely implement Allow/Reset.
 func NewRateLimiter(limit int, interval time.Duration) *RateLimiter {
-	// TODO: initialize and return RateLimiter
-	return &RateLimiter{}
+	return &RateLimiter{
+		limit:      limit,
+		interval:   interval,
+		timestamps: make(map[string][]time.Time),
+	}
 }
 
-// Allow returns true if a request for the given key is allowed, false if the limit is exceeded.
+// Allow checks if a request for the given key is allowed.
+// TODO: implement logic to remove expired timestamps and enforce limit.
 func (r *RateLimiter) Allow(key string) bool {
-	// TODO: implement rate limiting logic
+	// TODO: remove expired timestamps for this key
+	// TODO: allow the request if below limit, otherwise deny
 	return false
 }
 
 // Reset clears the request history for a given key.
-func (r *RateLimiter) Reset(key string) error {
+// If the key does not exist, it does nothing.
+func (r *RateLimiter) Reset(key string) {
 	// TODO: implement reset logic
-	return errors.New("not implemented")
 }

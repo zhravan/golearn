@@ -280,7 +280,10 @@ projects:
   title: Rate Limiting
   test_regex: ".*"
   hints:
-    - Implement a RateLimiter struct with a map to track timestamps per key.
+    - Implement a RateLimiter struct that tracks timestamps of requests per key using a map.
     - Use a mutex to handle concurrent access safely.
-    - Allow only N requests per interval; deny requests exceeding the limit.
-    - Optionally, implement a Reset method to clear a key's history.
+    - In the Allow method, remove expired timestamps and check if the number of recent requests exceeds the limit.
+    - Reset should clear a key's request history (if the key does not exist, do nothing).
+    - Consider edge cases: multiple keys, concurrent access, and requests exactly at the interval boundary.
+    - Use time.Sleep in tests cautiously to avoid flakiness; small buffers above the interval are recommended.
+    - Keep the timestamps map initialized in NewRateLimiter to prevent nil pointer errors.
