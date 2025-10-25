@@ -1,21 +1,13 @@
 package panicex
 
 // TODO:
-// - Implement CausePanic to panic when given a negative number
 // - Implement SafeDivision to divide two numbers and recover from panic if denominator is zero
 // - Implement TriggerMultiplePanics to demonstrate defer + recover in a loop
 // - Implement PanicWithMessage to panic with a custom message
 
-// CausePanic panics if input is negative, otherwise returns input
-func CausePanic(n int) int {
-	return 0
-}
-
-
 func SafeDivision(a, b int) (result int) {
 	return 0
 }
-
 
 func TriggerMultiplePanics(nums []int) []string {
 	return nil

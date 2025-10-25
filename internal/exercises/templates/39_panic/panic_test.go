@@ -5,24 +5,6 @@ import (
 	"testing"
 )
 
-func TestCausePanic(t *testing.T) {
-	t.Run("Positive Input", func(t *testing.T) {
-		result := CausePanic(5)
-		if result != 5 {
-			t.Errorf("CausePanic(5) = %d, want 5", result)
-		}
-	})
-
-	t.Run("Negative Input", func(t *testing.T) {
-		defer func() {
-			if r := recover(); r == nil {
-				t.Errorf("CausePanic(-3) should panic, but didn't")
-			}
-		}()
-		CausePanic(-3)
-	})
-}
-
 func TestSafeDivision(t *testing.T) {
 	t.Run("Normal Division", func(t *testing.T) {
 		result := SafeDivision(10, 2)
