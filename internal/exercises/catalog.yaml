@@ -217,7 +217,19 @@ concepts:
     - "Call wg.Add(1) before starting a goroutine and wg.Done() when it finishes."
     - "Close result channels after wg.Wait() so collectors can range over them."
     - "Capture loop variables correctly inside goroutines (e.g., `n := n`)."
-    - "Return results as a slice — order does not need to match input order
+    - "Return results as a slice — order does not need to match input order"
+    
+- slug: 43_worker_pools
+  title: Worker Pools
+  test_regex: ".*"
+  hints:
+    - Create separate channels for jobs (send work) and results (receive processed data).
+    - Launch multiple worker goroutines that read from jobs channel and write to results channel.
+    - Use channel directions (<-chan for receive-only, chan<- for send-only) in worker function signature.
+    - Close the jobs channel after sending all work to signal workers to finish.
+    - Use strings.TrimSpace() to clean message strings by removing leading/trailing whitespace.
+    - Collect exactly len(logs) results to ensure all work is processed.
+    
 projects:
 - slug: 101_text_analyzer
   title: Text Analyzer (Easy)
