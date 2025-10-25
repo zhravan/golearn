@@ -3,13 +3,14 @@ package waitgroup
 import "sync"
 
 func Squares(nums []int) []int {
-	if len(nums) == 0 {
+	length := len(nums)
+	if length == 0 {
 		return []int{}
 	}
 
-	ch := make(chan int, len(nums))
+	ch := make(chan int, length)
 	var wg sync.WaitGroup
-	wg.Add(len(nums))
+	wg.Add(length)
 
 	for _, n := range nums {
 		n := n
@@ -24,7 +25,7 @@ func Squares(nums []int) []int {
 		close(ch)
 	}()
 
-	out := make([]int, 0, len(nums))
+	out := make([]int, 0, length)
 	for v := range ch {
 		out = append(out, v)
 	}
