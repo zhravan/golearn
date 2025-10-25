@@ -217,7 +217,8 @@ concepts:
     - "Call wg.Add(1) before starting a goroutine and wg.Done() when it finishes."
     - "Close result channels after wg.Wait() so collectors can range over them."
     - "Capture loop variables correctly inside goroutines (e.g., `n := n`)."
-    - "Return results as a slice — order does not need to match input order
+    - "Return results as a slice — order does not need to match input order"
+    
 - slug: 43_worker_pools
   title: Worker Pools
   test_regex: ".*"
