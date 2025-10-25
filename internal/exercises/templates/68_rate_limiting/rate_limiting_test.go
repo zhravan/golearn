@@ -8,7 +8,7 @@ import (
 )
 
 func TestRateLimiter(t *testing.T) {
-	rl := NewRateLimiter(2, 100*time.Millisecond)
+	rl, _ := NewRateLimiter(2, 100*time.Millisecond)
 	key := "user1"
 
 	if !rl.Allow(key) {
@@ -32,7 +32,7 @@ func TestRateLimiter(t *testing.T) {
 }
 
 func TestReset(t *testing.T) {
-	rl := NewRateLimiter(1, 1*time.Second)
+	rl, _ := NewRateLimiter(1, 1*time.Second)
 	key := "user2"
 
 	if !rl.Allow(key) {
@@ -52,7 +52,7 @@ func TestReset(t *testing.T) {
 }
 
 func TestRateLimiterConcurrent(t *testing.T) {
-	rl := NewRateLimiter(10, 100*time.Millisecond)
+	rl, _ := NewRateLimiter(10, 100*time.Millisecond)
 	key := "user1"
 
 	var wg sync.WaitGroup
@@ -75,7 +75,7 @@ func TestRateLimiterConcurrent(t *testing.T) {
 }
 
 func TestMultipleKeys(t *testing.T) {
-	rl := NewRateLimiter(1, 100*time.Millisecond)
+	rl, _ := NewRateLimiter(1, 100*time.Millisecond)
 
 	if !rl.Allow("userA") {
 		t.Error("Expected first request for userA to be allowed")

@@ -19,13 +19,14 @@ type RateLimiter struct {
 }
 
 // NewRateLimiter returns a new RateLimiter with the given limit and interval.
+// If limit is <= 0 or interval is <= 0, it returns an error.
 // The timestamps map is initialized so learners can safely implement Allow/Reset.
-func NewRateLimiter(limit int, interval time.Duration) *RateLimiter {
+func NewRateLimiter(limit int, interval time.Duration) (*RateLimiter, error) {
 	return &RateLimiter{
 		limit:      limit,
 		interval:   interval,
 		timestamps: make(map[string][]time.Time),
-	}
+	}, nil
 }
 
 // Allow checks if a request for the given key is allowed.

@@ -1,6 +1,7 @@
 package rate_limiting
 
 import (
+	"errors"
 	"sync"
 	"time"
 )
@@ -14,19 +15,19 @@ type RateLimiter struct {
 }
 
 // NewRateLimiter returns a new RateLimiter with the given limit and interval.
-func NewRateLimiter(limit int, interval time.Duration) *RateLimiter {
+func NewRateLimiter(limit int, interval time.Duration) (*RateLimiter, error) {
 	if limit <= 0 {
-		panic("limit must be positive")
+		return nil, errors.New("limit must be positive")
 	}
 	if interval <= 0 {
-		panic("interval must be positive")
+		return nil, errors.New("interval must be positive")
 	}
 
 	return &RateLimiter{
 		limit:      limit,
 		interval:   interval,
 		timestamps: make(map[string][]time.Time),
-	}
+	}, nil
 }
 
 // Allow checks if a request for the given key is allowed.
