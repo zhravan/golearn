@@ -78,10 +78,10 @@ func TestLogProcessor(t *testing.T) {
 			t.Fatalf("Expected 20 processed logs, got %d", len(results))
 		}
 
-		// With 5 workers processing 20 logs at ~5ms each:
-		// Sequential would take ~100ms
-		// Concurrent should take ~20-30ms (4 batches of 5)
-		if elapsed.Milliseconds() > 50 {
+		// With 5 workers processing 20 logs at ~5 microseconds each:
+		// Sequential would take ~100 microseconds
+		// Concurrent should take ~20-30 microseconds (4 batches of 5)
+		if elapsed.Microseconds() > 50 {
 			t.Errorf("Processing took too long (%v), worker pool may not be working correctly", elapsed)
 		}
 	})

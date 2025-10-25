@@ -31,7 +31,7 @@ type ProcessedLog struct {
 // processLog processes a single log entry
 func processLog(log LogEntry) ProcessedLog {
 	fmt.Printf("Processing log ID: %d\n", log.ID)
-	time.Sleep(5 * time.Millisecond) // Simulate processing time
+	time.Sleep(5 * time.Microsecond) // Simulate processing time
 
 	// Convert level to severity
 	severity := 1 // Default INFO
