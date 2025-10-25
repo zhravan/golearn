@@ -296,6 +296,14 @@ projects:
       - "Use time.Parse() to parse time strings with known layouts"
       - "Use time.LoadLocation() to work with different timezones"
       - "Extract time components using .Date() and .Clock() methods"
+- slug: 39_panic
+  title: Panic and Recover
+  test_regex: ".*"
+  hints:
+    - "Use `panic()` to simulate runtime errors when appropriate."
+    - "Use `defer` with `recover()` to catch and handle panics."
+    - "Recovering from panics allows graceful handling of unexpected situations."
+    - "Remember: `recover()` only works inside a deferred function."
 
 - slug: 64_timers
   title: "Timers"
