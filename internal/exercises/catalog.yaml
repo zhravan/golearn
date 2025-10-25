@@ -169,6 +169,20 @@ concepts:
   test_regex: ".*"
   hints:
     - Use `make(chan T, N)` to create a buffered channel and `<-` to send and receive on it.
+- slug: 39_channel_directions
+  title: Channel Directions
+  test_regex: ".*"
+  hints:
+    - Create two channels, one for sending jobs and one for receiving results.
+    - Start 5 workers using go routines.
+    - Send 50 jobs to the worker pool.
+    - Receive results from the worker pool and store them in a `rs` slice.
+    - Enforce type safety by specifying the channel directions in worker function.
+- slug: 35_channel_sync
+  title: Channel Synchronization
+  test_regex: ".*"
+  hints:
+    - Use a buffered boolean channel and wait till go routine completes.
 - slug: 37_xml
   title: XML Encoding and Decoding
   test_regex: ".*"
@@ -177,7 +191,33 @@ concepts:
     - Add XML struct tags using `xml:"fieldname"` to map struct fields to XML elements.
     - Use xml.Marshal to convert structs to XML bytes.
     - Use xml.Unmarshal to parse XML bytes into structs.
-
+- slug: 40_channel_select
+  title: Channel Select
+  test_regex: ".*"
+  hints:
+    - Use `select` to handle multiple channel operations concurrently.
+    - Use `time.After` to simulate a 5 microsecond timeout.
+- slug: 41_time_delay
+  title: "Delays and Timers in Go"
+  difficulty: beginner
+  topics: ["time", "sleep", "channels", "timer"]
+  test_regex: ".*"
+  hints:
+    - "Use time.Sleep() to pause execution for a duration."
+    - "Convert milliseconds to time.Duration using time.Millisecond."
+    - "Use a buffered channel to send a signal after waiting."
+    - "Use time.After or time.Sleep to trigger events after delays."
+- slug: 42_wait_group
+  title: WaitGroups
+  test_regex: ".*"
+  difficulty: beginner
+  topics: ["concurrency", "sync", "goroutines"]
+  hints:
+    - "Use sync.WaitGroup to wait for all launched goroutines."
+    - "Call wg.Add(1) before starting a goroutine and wg.Done() when it finishes."
+    - "Close result channels after wg.Wait() so collectors can range over them."
+    - "Capture loop variables correctly inside goroutines (e.g., `n := n`)."
+    - "Return results as a slice — order does not need to match input order
 projects:
 - slug: 101_text_analyzer
   title: Text Analyzer (Easy)
@@ -264,3 +304,18 @@ projects:
     - "Use `defer` with `recover()` to catch and handle panics."
     - "Recovering from panics allows graceful handling of unexpected situations."
     - "Remember: `recover()` only works inside a deferred function."
+
+- slug: 64_timers
+  title: "Timers"
+  difficulty: medium
+  topics: ["time", "goroutines", "concurrency", "synchronization"]
+  test_regex: ".*"
+  hints:
+    - "Use a map[string]*time.Timer to track active timers by key."
+    - "Use a mutex to safely access the timers map concurrently."
+    - "Start a timer with time.AfterFunc(d, fn) to run a callback after duration d."
+    - "If Start is called again for an existing key, stop and replace the old timer."
+    - "Stop should remove the timer from the map and prevent the callback from firing."
+    - "Reset can call timer.Reset(d) to reschedule the same callback."
+    - "Remember to remove timers from the map after they fire to avoid memory leaks."
+    - "Write tests to verify Start, Stop, and Reset behavior, including concurrency scenarios."
