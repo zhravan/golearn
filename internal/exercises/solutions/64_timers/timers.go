@@ -59,7 +59,7 @@ func (tm *TimerManager) Stop(key string) bool {
 func (tm *TimerManager) Reset(key string, d time.Duration) {
 	tm.mu.Lock()
 	defer tm.mu.Unlock()
-	
+
 	if timer, ok := tm.timers[key]; ok {
 		timer.Reset(d)
 	}
