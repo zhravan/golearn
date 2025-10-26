@@ -209,6 +209,39 @@ concepts:
   hints:
     - Use `select` to handle multiple channel operations concurrently.
     - Use `time.After` to simulate a 5 microsecond timeout.
+- slug: 41_time_delay
+  title: "Delays and Timers in Go"
+  difficulty: beginner
+  topics: ["time", "sleep", "channels", "timer"]
+  test_regex: ".*"
+  hints:
+    - "Use time.Sleep() to pause execution for a duration."
+    - "Convert milliseconds to time.Duration using time.Millisecond."
+    - "Use a buffered channel to send a signal after waiting."
+    - "Use time.After or time.Sleep to trigger events after delays."
+- slug: 42_wait_group
+  title: WaitGroups
+  test_regex: ".*"
+  difficulty: beginner
+  topics: ["concurrency", "sync", "goroutines"]
+  hints:
+    - "Use sync.WaitGroup to wait for all launched goroutines."
+    - "Call wg.Add(1) before starting a goroutine and wg.Done() when it finishes."
+    - "Close result channels after wg.Wait() so collectors can range over them."
+    - "Capture loop variables correctly inside goroutines (e.g., `n := n`)."
+    - "Return results as a slice — order does not need to match input order"
+    
+- slug: 43_worker_pools
+  title: Worker Pools
+  test_regex: ".*"
+  hints:
+    - Create separate channels for jobs (send work) and results (receive processed data).
+    - Launch multiple worker goroutines that read from jobs channel and write to results channel.
+    - Use channel directions (<-chan for receive-only, chan<- for send-only) in worker function signature.
+    - Close the jobs channel after sending all work to signal workers to finish.
+    - Use strings.TrimSpace() to clean message strings by removing leading/trailing whitespace.
+    - Collect exactly len(logs) results to ensure all work is processed.
+    
 projects:
 - slug: 101_text_analyzer
   title: Text Analyzer (Easy)
@@ -287,3 +320,41 @@ projects:
       - "Use time.Parse() to parse time strings with known layouts"
       - "Use time.LoadLocation() to work with different timezones"
       - "Extract time components using .Date() and .Clock() methods"
+
+- slug: 39_panic
+  title: Panic and Recover
+  test_regex: ".*"
+  hints:
+    - "Use `panic()` to simulate runtime errors when appropriate."
+    - "Use `defer` with `recover()` to catch and handle panics."
+    - "Recovering from panics allows graceful handling of unexpected situations."
+    - "Remember: `recover()` only works inside a deferred function."
+
+- slug: 64_timers
+  title: "Timers"
+  difficulty: medium
+  topics: ["time", "goroutines", "concurrency", "synchronization"]
+  test_regex: ".*"
+  hints:
+    - "Use a map[string]*time.Timer to track active timers by key."
+    - "Use a mutex to safely access the timers map concurrently."
+    - "Start a timer with time.AfterFunc(d, fn) to run a callback after duration d."
+    - "If Start is called again for an existing key, stop and replace the old timer."
+    - "Stop should remove the timer from the map and prevent the callback from firing."
+    - "Reset can call timer.Reset(d) to reschedule the same callback."
+    - "Remember to remove timers from the map after they fire to avoid memory leaks."
+    - "Write tests to verify Start, Stop, and Reset behavior, including concurrency scenarios."
+    
+- slug: 68_rate_limiting
+  title: Rate Limiting
+  test_regex: ".*"
+  difficulty: medium
+  topics: ["time", "concurrency", "maps"]
+  hints:
+    - "Implement a RateLimiter struct that tracks request timestamps per key using a map[string][]time.Time."
+    - "Use a mutex to safely handle concurrent access to the map."
+    - "In the Allow method, remove timestamps older than the interval and check if the number of recent requests exceeds the limit."
+    - "Reset should clear the request history for a key; if the key does not exist, do nothing."
+    - "Consider edge cases: multiple keys, concurrent access, and requests exactly at the interval boundary."
+    - "In tests, use time.Sleep with a small buffer above the interval to avoid flakiness."
+    - "Initialize the timestamps map in NewRateLimiter to prevent nil pointer errors."
