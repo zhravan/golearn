@@ -49,6 +49,14 @@ title: Exercises
     <li>25_range_iterators - Range over Iterators</li>
     <li>26_errors - Error Handling</li>
     <li>27_custom_errors - Custom Errors</li>
+    <li>28_defer - Defer</li>
+    <li>29_go_routines - Go Routines</li>
+    <li>30_channels - Channels</li>
+    <li>31_mutexes - Mutexes</li>
+    <li>32_sorting - Sorting</li>
+    <li>33_string_formatting - String Formatting</li>
+    <li>34_channel_buffering - Channel Buffering</li>
+    <li>41_regex - Regular Expressions</li>
     <li>36_json - JSON Processing</li>
     <li>37_xml - XML Processing</li>
   </ul>
