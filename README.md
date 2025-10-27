@@ -4,6 +4,8 @@
     <h6 align="center">Rustlings‑style Go exercises in a tiny CLI.</h6>
 </p>
 
+
+안녕하세요.   반갑습니다.     
 <div align="center">
     <a href="https://discord.gg/JCKzJcb24r"> Join our discord community </a>
 </div>
