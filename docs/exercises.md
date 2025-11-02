@@ -50,7 +50,7 @@ title: Exercises
     <li>26_errors - Error Handling</li>
     <li>27_custom_errors - Custom Errors</li>
     <li>41_regex - Regular Expressions</li>
-    <li>42_string_functions - String Functions</li>
+    <li>44_string_functions - String Functions</li>
     <li>36_json - JSON Processing</li>
     <li>37_xml - XML Processing</li>
   </ul>
