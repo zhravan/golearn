@@ -68,6 +68,7 @@ title: Exercises
     <li>107_image_processing_utility - Image processing (Hard)</li>
     <li>108_basic_key_value_store - Key-value store (Hard)</li>
     <li>109_epoch - Time conversion (Beginner)</li>
+    <li>120_time - Time functions exercise (Beginner)</li>
   </ul>
 </div>
 
