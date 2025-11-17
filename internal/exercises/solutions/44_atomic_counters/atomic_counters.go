@@ -5,7 +5,7 @@ import (
 	"sync/atomic"
 )
 
-func IncrementCounter() uint64 {
+func NoRequestsProcessed() uint64 {
 
 	var ops atomic.Uint64
 	var wg sync.WaitGroup
