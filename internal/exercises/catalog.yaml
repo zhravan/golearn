@@ -229,7 +229,15 @@ concepts:
     - Close the jobs channel after sending all work to signal workers to finish.
     - Use strings.TrimSpace() to clean message strings by removing leading/trailing whitespace.
     - Collect exactly len(logs) results to ensure all work is processed.
-    
+- slug: 44_atomic_counters
+  title: Atomic Counters
+  test_regex: ".*"
+  hints:
+    - Use `sync/atomic` package to create and increment atomic counter.
+    - Launch 10,000 anonymous go routines that simultaneously increment the counter.
+    - Use WaitGroups to wait for all go routines to finish. 
+
+
 projects:
 - slug: 101_text_analyzer
   title: Text Analyzer (Easy)
