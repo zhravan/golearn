@@ -241,6 +241,12 @@ concepts:
   test_regex: ".*"
   hints:
     - Use `for i := range ch {...}` syntax to range over a channels. 
+- slug: 46_non_blocking_channel_operations
+  title: Non-blocking channel operations
+  test_regex: ".*"
+  hints:
+    - Use `default` case in select to handle non-blocking channel operations.
+    - Safely increment `dropped` using mutex `Lock()` and `Unlock()`.
 
 projects:
 - slug: 101_text_analyzer
