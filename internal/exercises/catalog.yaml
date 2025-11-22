@@ -307,6 +307,16 @@ projects:
     - "Use `t.Unix()` to convert time back to epoch."
     - "Remember Go’s `time.Parse` can help parse date strings."
 
+
+- slug: regular-expressions
+  title: Regular Expressions
+  test_regex: ".*"
+  hints:
+    - Use the regexp package from the standard library.
+    - Compile the pattern with regexp.Compile or regexp.MustCompile.
+    - Use MatchString on the compiled regex to check if the input matches the pattern.
+    - Patterns like ^a.*z$ match strings starting with 'a' and ending with 'z'.
+    - See https://pkg.go.dev/regexp for more examples.
 - slug: 37_sorting_by_functions
   title: "Sorting by Functions"
   difficulty: beginner
