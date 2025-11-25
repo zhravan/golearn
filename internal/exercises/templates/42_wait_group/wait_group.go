@@ -1,7 +1,5 @@
 package waitgroup
 
-import "sync"
-
 // Squares takes a slice of numbers and should return a slice
 // containing the square of each number.
 
@@ -17,7 +15,6 @@ import "sync"
 // 5. Collect all values from the channel into a slice and return it.
 
 func Squares(nums []int) []int {
-	var wg sync.WaitGroup
 
 	// TODO: implement the logic here
 

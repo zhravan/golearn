@@ -255,7 +255,25 @@ concepts:
     - Close the jobs channel after sending all work to signal workers to finish.
     - Use strings.TrimSpace() to clean message strings by removing leading/trailing whitespace.
     - Collect exactly len(logs) results to ensure all work is processed.
-- slug: 44_string_functions
+- slug: 44_atomic_counters
+  title: Atomic Counters
+  test_regex: ".*"
+  hints:
+    - Use `sync/atomic` package to create and increment atomic counter.
+    - Launch 10,000 anonymous go routines that simultaneously increment the counter.
+    - Use WaitGroups to wait for all go routines to finish. 
+- slug: 45_range_over_channels
+  title: Range over channels
+  test_regex: ".*"
+  hints:
+    - Use `for i := range ch {...}` syntax to range over a channels. 
+- slug: 46_non_blocking_channel_operations
+  title: Non-blocking channel operations
+  test_regex: ".*"
+  hints:
+    - Use `default` case in select to handle non-blocking channel operations.
+    - Safely increment `dropped` using mutex `Lock()` and `Unlock()`.
+- slug: 47_string_functions
   title: String Functions
   test_regex: ".*"
   hints:
