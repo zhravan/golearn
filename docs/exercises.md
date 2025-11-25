@@ -40,7 +40,7 @@ title: Exercises
     <li>20_methods - Methods</li>
   </ul>
   
-  <h3>Advanced (21-37)</h3>
+  <h3>Advanced (21-47)</h3>
   <ul>
     <li>21_interfaces - Interfaces</li>
     <li>22_enums - Enums</li>
@@ -51,6 +51,7 @@ title: Exercises
     <li>27_custom_errors - Custom Errors</li>
     <li>36_json - JSON Processing</li>
     <li>37_xml - XML Processing</li>
+    <li>47_string_functions - String Functions</li>
   </ul>
 </div>
 

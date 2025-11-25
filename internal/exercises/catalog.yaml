@@ -169,6 +169,45 @@ concepts:
   test_regex: ".*"
   hints:
     - Use `make(chan T, N)` to create a buffered channel and `<-` to send and receive on it.
+- slug: 35_channel_sync
+  title: Channel Synchronization
+  test_regex: ".*"
+  hints:
+    - Use a buffered boolean channel and wait till go routine completes.
+- slug: 36_json
+  title: JSON
+  test_regex: ".*"
+  hints:
+    - Use the encoding/json package to work with JSON data.
+    - Implement MarshalPerson to convert a struct into JSON using json.Marshal.
+    - Implement UnmarshalPerson to convert a JSON string into a struct using json.Unmarshal.
+    - Handle and return errors properly in both functions.
+- slug: 37_xml
+  title: XML Encoding and Decoding
+  test_regex: ".*"
+  hints:
+    - Use encoding/xml package for marshaling and unmarshaling XML data.
+    - Add XML struct tags using `xml:"fieldname"` to map struct fields to XML elements.
+    - Use xml.Marshal to convert structs to XML bytes.
+    - Use xml.Unmarshal to parse XML bytes into structs.
+- slug: 48_sorting_by_functions
+  title: "Sorting by Functions"
+  difficulty: beginner
+  topics: ["slices", "sorting", "functions"]
+  hints:
+      - "Implement sort.Interface with Len(), Less(), and Swap() methods"
+      - "Create custom slice types like ByName and ByAge (e.g., type ByName []Person)"
+      - "Use sort.Sort() to sort slices with your custom comparison logic"
+      - "Remember to make copies of slices to avoid modifying the original"
+- slug: 38_time_formatting
+  title: "Time Formatting"
+  difficulty: beginner
+  topics: ["time", "formatting", "parsing"]
+  hints:
+      - "Use time.Now().Format() to format current time with a specific layout"
+      - "Use time.Parse() to parse time strings with known layouts"
+      - "Use time.LoadLocation() to work with different timezones"
+      - "Extract time components using .Date() and .Clock() methods"
 - slug: 39_channel_directions
   title: Channel Directions
   test_regex: ".*"
@@ -178,19 +217,6 @@ concepts:
     - Send 50 jobs to the worker pool.
     - Receive results from the worker pool and store them in a `rs` slice.
     - Enforce type safety by specifying the channel directions in worker function.
-- slug: 35_channel_sync
-  title: Channel Synchronization
-  test_regex: ".*"
-  hints:
-    - Use a buffered boolean channel and wait till go routine completes.
-- slug: 37_xml
-  title: XML Encoding and Decoding
-  test_regex: ".*"
-  hints:
-    - Use encoding/xml package for marshaling and unmarshaling XML data.
-    - Add XML struct tags using `xml:"fieldname"` to map struct fields to XML elements.
-    - Use xml.Marshal to convert structs to XML bytes.
-    - Use xml.Unmarshal to parse XML bytes into structs.
 - slug: 40_channel_select
   title: Channel Select
   test_regex: ".*"
@@ -247,7 +273,50 @@ concepts:
   hints:
     - Use `default` case in select to handle non-blocking channel operations.
     - Safely increment `dropped` using mutex `Lock()` and `Unlock()`.
-
+- slug: 47_string_functions
+  title: String Functions
+  test_regex: ".*"
+  hints:
+    - Use strings.Contains to check if a substring exists in a string.
+    - Use strings.HasPrefix and strings.HasSuffix for prefix/suffix checking.
+    - Use strings.Index to find the position of a substring.
+    - Use strings.ToUpper and strings.ToLower for case conversion.
+    - Use strings.TrimSpace to remove leading and trailing whitespace.
+- slug: 49_panic
+  title: Panic and Recover
+  test_regex: ".*"
+  hints:
+    - "Use `panic()` to simulate runtime errors when appropriate."
+    - "Use `defer` with `recover()` to catch and handle panics."
+    - "Recovering from panics allows graceful handling of unexpected situations."
+    - "Remember: `recover()` only works inside a deferred function."
+- slug: 50_timers
+  title: "Timers"
+  difficulty: medium
+  topics: ["time", "goroutines", "concurrency", "synchronization"]
+  test_regex: ".*"
+  hints:
+    - "Use a map[string]*time.Timer to track active timers by key."
+    - "Use a mutex to safely access the timers map concurrently."
+    - "Start a timer with time.AfterFunc(d, fn) to run a callback after duration d."
+    - "If Start is called again for an existing key, stop and replace the old timer."
+    - "Stop should remove the timer from the map and prevent the callback from firing."
+    - "Reset can call timer.Reset(d) to reschedule the same callback."
+    - "Remember to remove timers from the map after they fire to avoid memory leaks."
+    - "Write tests to verify Start, Stop, and Reset behavior, including concurrency scenarios."
+- slug: 51_rate_limiting
+  title: Rate Limiting
+  test_regex: ".*"
+  difficulty: medium
+  topics: ["time", "concurrency", "maps"]
+  hints:
+    - "Implement a RateLimiter struct that tracks request timestamps per key using a map[string][]time.Time."
+    - "Use a mutex to safely handle concurrent access to the map."
+    - "In the Allow method, remove timestamps older than the interval and check if the number of recent requests exceeds the limit."
+    - "Reset should clear the request history for a key; if the key does not exist, do nothing."
+    - "Consider edge cases: multiple keys, concurrent access, and requests exactly at the interval boundary."
+    - "In tests, use time.Sleep with a small buffer above the interval to avoid flakiness."
+    - "Initialize the timestamps map in NewRateLimiter to prevent nil pointer errors."
 projects:
 - slug: 101_text_analyzer
   title: Text Analyzer (Easy)
@@ -289,15 +358,6 @@ projects:
   test_regex: ".*"
   hints:
     - Implement an in-memory key-value store with basic CRUD operations and optional persistence.
-- slug: 36_json
-  title: JSON
-  test_regex: ".*"
-  hints:
-    - Use the encoding/json package to work with JSON data.
-    - Implement MarshalPerson to convert a struct into JSON using json.Marshal.
-    - Implement UnmarshalPerson to convert a JSON string into a struct using json.Unmarshal.
-    - Handle and return errors properly in both functions.
-
 - slug: 109_epoch
   title: "Epoch Conversion"
   difficulty: beginner
@@ -305,62 +365,4 @@ projects:
   hints:
     - "Use Go's `time.Unix()` to convert an epoch to time."
     - "Use `t.Unix()` to convert time back to epoch."
-    - "Remember Go’s `time.Parse` can help parse date strings."
-
-- slug: 37_sorting_by_functions
-  title: "Sorting by Functions"
-  difficulty: beginner
-  topics: ["slices", "sorting", "functions"]
-  hints:
-      - "Implement sort.Interface with Len(), Less(), and Swap() methods"
-      - "Create custom slice types like ByName and ByAge (e.g., type ByName []Person)"
-      - "Use sort.Sort() to sort slices with your custom comparison logic"
-      - "Remember to make copies of slices to avoid modifying the original"
-
-- slug: 38_time_formatting
-  title: "Time Formatting"
-  difficulty: beginner
-  topics: ["time", "formatting", "parsing"]
-  hints:
-      - "Use time.Now().Format() to format current time with a specific layout"
-      - "Use time.Parse() to parse time strings with known layouts"
-      - "Use time.LoadLocation() to work with different timezones"
-      - "Extract time components using .Date() and .Clock() methods"
-
-- slug: 39_panic
-  title: Panic and Recover
-  test_regex: ".*"
-  hints:
-    - "Use `panic()` to simulate runtime errors when appropriate."
-    - "Use `defer` with `recover()` to catch and handle panics."
-    - "Recovering from panics allows graceful handling of unexpected situations."
-    - "Remember: `recover()` only works inside a deferred function."
-
-- slug: 64_timers
-  title: "Timers"
-  difficulty: medium
-  topics: ["time", "goroutines", "concurrency", "synchronization"]
-  test_regex: ".*"
-  hints:
-    - "Use a map[string]*time.Timer to track active timers by key."
-    - "Use a mutex to safely access the timers map concurrently."
-    - "Start a timer with time.AfterFunc(d, fn) to run a callback after duration d."
-    - "If Start is called again for an existing key, stop and replace the old timer."
-    - "Stop should remove the timer from the map and prevent the callback from firing."
-    - "Reset can call timer.Reset(d) to reschedule the same callback."
-    - "Remember to remove timers from the map after they fire to avoid memory leaks."
-    - "Write tests to verify Start, Stop, and Reset behavior, including concurrency scenarios."
-    
-- slug: 68_rate_limiting
-  title: Rate Limiting
-  test_regex: ".*"
-  difficulty: medium
-  topics: ["time", "concurrency", "maps"]
-  hints:
-    - "Implement a RateLimiter struct that tracks request timestamps per key using a map[string][]time.Time."
-    - "Use a mutex to safely handle concurrent access to the map."
-    - "In the Allow method, remove timestamps older than the interval and check if the number of recent requests exceeds the limit."
-    - "Reset should clear the request history for a key; if the key does not exist, do nothing."
-    - "Consider edge cases: multiple keys, concurrent access, and requests exactly at the interval boundary."
-    - "In tests, use time.Sleep with a small buffer above the interval to avoid flakiness."
-    - "Initialize the timestamps map in NewRateLimiter to prevent nil pointer errors."
+    - "Remember Go's `time.Parse` can help parse date strings."
