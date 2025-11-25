@@ -190,7 +190,7 @@ concepts:
     - Add XML struct tags using `xml:"fieldname"` to map struct fields to XML elements.
     - Use xml.Marshal to convert structs to XML bytes.
     - Use xml.Unmarshal to parse XML bytes into structs.
-- slug: 37_sorting_by_functions
+- slug: 48_sorting_by_functions
   title: "Sorting by Functions"
   difficulty: beginner
   topics: ["slices", "sorting", "functions"]
@@ -282,7 +282,7 @@ concepts:
     - Use strings.Index to find the position of a substring.
     - Use strings.ToUpper and strings.ToLower for case conversion.
     - Use strings.TrimSpace to remove leading and trailing whitespace.
-- slug: 39_panic
+- slug: 49_panic
   title: Panic and Recover
   test_regex: ".*"
   hints:
@@ -290,7 +290,7 @@ concepts:
     - "Use `defer` with `recover()` to catch and handle panics."
     - "Recovering from panics allows graceful handling of unexpected situations."
     - "Remember: `recover()` only works inside a deferred function."
-- slug: 64_timers
+- slug: 50_timers
   title: "Timers"
   difficulty: medium
   topics: ["time", "goroutines", "concurrency", "synchronization"]
@@ -304,7 +304,7 @@ concepts:
     - "Reset can call timer.Reset(d) to reschedule the same callback."
     - "Remember to remove timers from the map after they fire to avoid memory leaks."
     - "Write tests to verify Start, Stop, and Reset behavior, including concurrency scenarios."
-- slug: 68_rate_limiting
+- slug: 51_rate_limiting
   title: Rate Limiting
   test_regex: ".*"
   difficulty: medium
