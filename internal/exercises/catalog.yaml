@@ -317,6 +317,14 @@ projects:
       - "Use sort.Sort() to sort slices with your custom comparison logic"
       - "Remember to make copies of slices to avoid modifying the original"
 
+- slug: 120_time
+  title: "Time"
+  description: "Practice working with Go’s time package: formatting dates and computing day differences."
+  template: "templates/time.go"
+  test: "templates/time_test.go"
+  hints:
+    - "Use time.Format with layout \"2006-01-02\""
+    - "Subtract two times to get a Duration, then convert to hours and divide by 24"
 - slug: 38_time_formatting
   title: "Time Formatting"
   difficulty: beginner
