@@ -182,3 +182,16 @@ func TestDiscoverLocal_NoDir(t *testing.T) {
 		t.Fatalf("should not error if exercises directory is missing")
 	}
 }
+
+func TestCatalogOverride(t *testing.T) {
+    withTestCatalogLoader(func() (Catalog, error) {
+        return Catalog{
+            Concepts: []Exercise{{Slug: "01_mock"}},
+        }, nil
+    }, func() {
+        c := catalog()
+        if len(c.Concepts) != 1 || c.Concepts[0].Slug != "01_mock" {
+            t.Fatalf("expected mock catalog")
+        }
+    })
+}

@@ -31,17 +31,51 @@ type Catalog struct {
 	Projects []Exercise
 }
 
+// --- Catalog Loader Infrastructure ---
+
+// defaultCatalogLoader loads the catalog from embedded FS.
+// Tests override this to inject fake catalogs.
+var defaultCatalogLoader = func() (Catalog, error) {
+	return loadCatalogFromFS(catalogFS)
+}
+
 var (
+	catalogMu   sync.Mutex
 	catalogOnce sync.Once
 	catalogData Catalog
 )
 
-// Get the singleton catalog instance
-// Loads from embedded FS on first call
+// withTestCatalogLoader temporarily overrides the catalog loader
+// and resets internal singleton state for the duration of the test.
+func withTestCatalogLoader(loader func() (Catalog, error), fn func()) {
+    catalogMu.Lock()
+
+    oldLoader := defaultCatalogLoader
+
+    // override loader + reset singleton
+    defaultCatalogLoader = loader
+    catalogOnce = sync.Once{}
+    catalogData = Catalog{}
+
+    catalogMu.Unlock()
+
+    fn()
+
+    // restore loader, and reset the once/data again
+    catalogMu.Lock()
+    defaultCatalogLoader = oldLoader
+    catalogOnce = sync.Once{}
+    catalogData = Catalog{}
+    catalogMu.Unlock()
+}
+
+
+// Get the singleton catalog instance.
+// Loads from embedded FS on first call,
 // or falls back to default if loading fails.
 func catalog() Catalog {
 	catalogOnce.Do(func() {
-		cat, err := loadCatalogFromFS(catalogFS)
+		cat, err := defaultCatalogLoader()
 		if err != nil || (len(cat.Concepts) == 0 && len(cat.Projects) == 0) {
 			catalogData = fallbackCatalog()
 			return
@@ -90,7 +124,7 @@ func loadExercisesDir(fsys fs.FS, dir string) ([]Exercise, error) {
 		}
 
 		name := e.Name()
-		if filepath.Ext(name) != ".yaml" && filepath.Ext(name) != ".yml" {
+		if ext := filepath.Ext(name); ext != ".yaml" && ext != ".yml" {
 			continue
 		}
 
@@ -161,7 +195,6 @@ func ListAll() (Catalog, error) {
 	}
 
 	if len(locals) > 0 {
-		// If local exercises exist, prefer them.
 		return Catalog{Concepts: locals}, nil
 	}
 
@@ -205,16 +238,13 @@ func Reset(ex Exercise) error {
 	return copyExerciseTemplate(ex.Slug)
 }
 
-// Check if template for given slug exists
-// in embedded FS.
 func templateExists(slug string) bool {
 	root := filepath.Join("templates", slug)
 	_, err := fs.Stat(templatesFS, root)
 	return err == nil
 }
 
-// Initialize all exercises from embedded templates
-// into local exercises directory.
+// Initialize all exercises from embedded templates.
 func InitAll() error {
 	for _, ex := range catalog().Concepts {
 		if err := copyExerciseTemplate(ex.Slug); err != nil {
@@ -229,8 +259,7 @@ func InitAll() error {
 	return nil
 }
 
-// Copy exercise template from embedded FS to local exercises dir
-// for a given slug.
+// Copy exercise template from embedded FS to local exercises dir.
 func copyExerciseTemplate(slug string) error {
 	targetDir := filepath.Join("exercises", slug)
 
