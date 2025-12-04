@@ -1,8 +1,8 @@
 package exercises
 
 import (
-	"sync"
 	"strings"
+	"sync"
 	"testing"
 	"testing/fstest"
 
@@ -15,7 +15,6 @@ func y(v any) []byte {
 	return b
 }
 
-// 
 func TestLoadExercisesDir_LoadsValidYAML(t *testing.T) {
 	fsys := fstest.MapFS{
 		"Catalog/Concepts/a.yaml": &fstest.MapFile{
@@ -55,7 +54,6 @@ func TestLoadExercisesDir_LoadsValidYAML(t *testing.T) {
 	}
 }
 
-
 func TestLoadExercisesDir_RejectsEmptySlug(t *testing.T) {
 	fsys := fstest.MapFS{
 		"Catalog/Concepts/bad.yaml": &fstest.MapFile{
@@ -83,7 +81,6 @@ func TestLoadExercisesDir_IgnoresNonYAML(t *testing.T) {
 		t.Fatalf("expected 1 YAML item, got %d", len(items))
 	}
 }
-
 
 func TestLoadCatalogFromFS_LoadsConceptsAndProjects(t *testing.T) {
 	fsys := fstest.MapFS{
@@ -148,7 +145,6 @@ func TestLoadCatalogFromFS_InvalidYAML(t *testing.T) {
 	}
 }
 
-
 func TestFallbackCatalog(t *testing.T) {
 	f := fallbackCatalog()
 	if len(f.Concepts) != 1 {
@@ -159,29 +155,26 @@ func TestFallbackCatalog(t *testing.T) {
 	}
 }
 
-
 func TestCatalog_UsesDirectoryLoader(t *testing.T) {
-    // Reset catalogOnce
-    catalogOnce = sync.Once{}
+	// Reset catalogOnce
+	catalogOnce = sync.Once{}
 
-    fsys := fstest.MapFS{
-        "Catalog/Concepts/a.yaml": &fstest.MapFile{
-            Data: y(Exercise{Slug: "01_test"}),
-        },
-    }
+	fsys := fstest.MapFS{
+		"Catalog/Concepts/a.yaml": &fstest.MapFile{
+			Data: y(Exercise{Slug: "01_test"}),
+		},
+	}
 
-    // Call loader directly
-    cat, err := loadCatalogFromFS(fsys)
-    if err != nil {
-        t.Fatalf("unexpected error: %v", err)
-    }
+	// Call loader directly
+	cat, err := loadCatalogFromFS(fsys)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
 
-    if len(cat.Concepts) != 1 || cat.Concepts[0].Slug != "01_test" {
-        t.Fatalf("loadCatalogFromFS did not correctly read from FS")
-    }
+	if len(cat.Concepts) != 1 || cat.Concepts[0].Slug != "01_test" {
+		t.Fatalf("loadCatalogFromFS did not correctly read from FS")
+	}
 }
-
-
 
 func TestDiscoverLocal_NoDir(t *testing.T) {
 	_, err := discoverLocal()
