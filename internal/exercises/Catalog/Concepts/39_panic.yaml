@@ -5,4 +5,4 @@
     - Use `panic()` to simulate runtime errors when appropriate.
     - Use `defer` with `recover()` to catch and handle panics.
     - Recovering from panics allows graceful handling of unexpected situations.
-    - Remember: `recover()` only works inside a deferred function.
+    - Remember: '`recover()` only works inside a deferred function.'
