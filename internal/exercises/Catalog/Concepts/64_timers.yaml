@@ -1,15 +1,13 @@
 - slug: 64_timers
   title: "Timers"
-  difficulty: medium
-  topics: ["time", "goroutines", "concurrency", "synchronization"]
   test_regex: ".*"
   hints:
-    - "Use a map[string]*time.Timer to track active timers by key."
-    - "Use a mutex to safely access the timers map concurrently."
-    - "Start a timer with time.AfterFunc(d, fn) to run a callback after duration d."
-    - "If Start is called again for an existing key, stop and replace the old timer."
-    - "Stop should remove the timer from the map and prevent the callback from firing."
-    - "Reset can call timer.Reset(d) to reschedule the same callback."
-    - "Remember to remove timers from the map after they fire to avoid memory leaks."
-    - "Write tests to verify Start, Stop, and Reset behavior, including concurrency scenarios."
+    - Use a map[string]*time.Timer to track active timers by key.
+    - Use a mutex to safely access the timers map concurrently.
+    - Start a timer with time.AfterFunc(d, fn) to run a callback after duration d.
+    - If Start is called again for an existing key, stop and replace the old timer.
+    - Stop should remove the timer from the map and prevent the callback from firing.
+    - Reset can call timer.Reset(d) to reschedule the same callback.
+    - Remember to remove timers from the map after they fire to avoid memory leaks.
+    - Write tests to verify Start, Stop, and Reset behavior, including concurrency scenarios.
     

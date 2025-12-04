@@ -1,9 +1,6 @@
 - slug: 09_epoch
   title: "Epoch Conversion"
-  difficulty: beginner
-  topics: ["time", "epoch", "unix"]
   hints:
-    - "Use Go's `time.Unix()` to convert an epoch to time."
-    - "Use `t.Unix()` to convert time back to epoch."
-    - "Remember Go’s `time.Parse` can help parse date strings."
-
+    - Use Go's `time.Unix()` to convert an epoch to time.
+    - Use `t.Unix()` to convert time back to epoch.
+    - Remember Go’s `time.Parse` can help parse date strings.

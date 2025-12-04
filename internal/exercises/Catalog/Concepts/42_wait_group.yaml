@@ -1,12 +1,9 @@
 - slug: 42_wait_group
   title: WaitGroups
   test_regex: ".*"
-  difficulty: beginner
-  topics: ["concurrency", "sync", "goroutines"]
   hints:
-    - "Use sync.WaitGroup to wait for all launched goroutines."
-    - "Call wg.Add(1) before starting a goroutine and wg.Done() when it finishes."
-    - "Close result channels after wg.Wait() so collectors can range over them."
-    - "Capture loop variables correctly inside goroutines (e.g., `n := n`)."
-    - "Return results as a slice — order does not need to match input order"
-    
+    - Use sync.WaitGroup to wait for all launched goroutines.
+    - Call wg.Add(1) before starting a goroutine and wg.Done() when it finishes.
+    - Close result channels after wg.Wait() so collectors can range over them.
+    - Capture loop variables correctly inside goroutines (e.g., `n := n`).
+    - Return results as a slice — order does not need to match input order.
