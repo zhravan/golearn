@@ -1,0 +1,5 @@
+- slug: 28_defer
+  title: Defer
+  test_regex: ".*"
+  hints:
+    - Use `f.Close()` with `defer` keyword.

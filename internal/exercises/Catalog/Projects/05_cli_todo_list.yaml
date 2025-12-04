@@ -1,0 +1,5 @@
+- slug: 05_cli_todo_list
+  title: CLI Todo List (Medium)
+  test_regex: ".*"
+  hints:
+    - Build a command-line tool to manage a todo list, including adding, listing, and completing tasks.

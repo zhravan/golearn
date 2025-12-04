@@ -1,0 +1,5 @@
+- slug: 34_channel_buffering
+  title: Channel Buffering
+  test_regex: ".*"
+  hints:
+    - Use `make(chan T, N)` to create a buffered channel and `<-` to send and receive on it.

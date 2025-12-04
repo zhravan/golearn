@@ -1,0 +1,5 @@
+- slug: 02_shape_calculator
+  title: Shape Area Calculator (Medium)
+  test_regex: ".*"
+  hints:
+    - Define structs for different shapes, implement methods to calculate their areas, and use an interface for common shape behavior.

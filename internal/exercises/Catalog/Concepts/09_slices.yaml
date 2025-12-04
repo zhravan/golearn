@@ -1,0 +1,5 @@
+- slug: 09_slices
+  title: Slices
+  test_regex: ".*"
+  hints:
+    - Append values then compute a sum.

@@ -1,0 +1,6 @@
+- slug: 40_channel_select
+  title: Channel Select
+  test_regex: ".*"
+  hints:
+    - Use `select` to handle multiple channel operations concurrently.
+    - Use `time.After` to simulate a 5 microsecond timeout.

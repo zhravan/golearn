@@ -1,0 +1,5 @@
+- slug: 45_range_over_channels
+  title: Range over channels
+  test_regex: ".*"
+  hints:
+    - Use `for i := range ch {...}` syntax to range over a channels. 

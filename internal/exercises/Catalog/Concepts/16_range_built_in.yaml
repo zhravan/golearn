@@ -1,0 +1,5 @@
+- slug: 16_range_built_in
+  title: Range over Built-in Types
+  test_regex: ".*"
+  hints:
+    - Use range to iterate over a slice and a map.

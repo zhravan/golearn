@@ -1,0 +1,5 @@
+- slug: 19_structs
+  title: Structs
+  test_regex: ".*"
+  hints:
+    - Define a struct with fields for name and age, then create an instance.

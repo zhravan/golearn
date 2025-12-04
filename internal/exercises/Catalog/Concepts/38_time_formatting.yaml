@@ -1,0 +1,10 @@
+- slug: 38_time_formatting
+  title: "Time Formatting"
+  difficulty: beginner
+  topics: ["time", "formatting", "parsing"]
+  hints:
+      - "Use time.Now().Format() to format current time with a specific layout"
+      - "Use time.Parse() to parse time strings with known layouts"
+      - "Use time.LoadLocation() to work with different timezones"
+      - "Extract time components using .Date() and .Clock() methods"
+
