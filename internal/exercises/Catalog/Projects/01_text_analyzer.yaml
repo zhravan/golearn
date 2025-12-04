@@ -1,0 +1,5 @@
+- slug: 01_text_analyzer
+  title: Text Analyzer (Easy)
+  test_regex: ".*"
+  hints:
+    - Implement functions to count characters, words, and unique words in a given text.

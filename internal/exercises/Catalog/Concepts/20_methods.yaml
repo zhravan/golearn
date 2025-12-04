@@ -1,0 +1,5 @@
+- slug: 20_methods
+  title: Methods
+  test_regex: ".*"
+  hints:
+    - Add a method to a struct that calculates something based on its fields.

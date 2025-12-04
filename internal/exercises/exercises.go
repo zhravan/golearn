@@ -7,6 +7,7 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"sort"
 	"sync"
 
 	"gopkg.in/yaml.v3"
@@ -15,7 +16,7 @@ import (
 //go:embed templates/**
 var templatesFS embed.FS
 
-//go:embed catalog.yaml
+//go:embed Catalog/**
 var catalogFS embed.FS
 
 type Exercise struct {
@@ -26,40 +27,56 @@ type Exercise struct {
 }
 
 type Catalog struct {
-	Concepts []Exercise `yaml:"concepts"`
-	Projects []Exercise `yaml:"projects"`
+	Concepts []Exercise
+	Projects []Exercise
+}
+
+// --- Catalog Loader Infrastructure ---
+
+// defaultCatalogLoader loads the catalog from embedded FS.
+// Tests override this to inject fake catalogs.
+var defaultCatalogLoader = func() (Catalog, error) {
+	return loadCatalogFromFS(catalogFS)
 }
 
 var (
+	catalogMu   sync.Mutex
 	catalogOnce sync.Once
 	catalogData Catalog
 )
 
+// withTestCatalogLoader temporarily overrides the catalog loader
+// and resets internal singleton state for the duration of the test.
+func withTestCatalogLoader(loader func() (Catalog, error), fn func()) {
+	catalogMu.Lock()
+
+	oldLoader := defaultCatalogLoader
+
+	// override loader + reset singleton
+	defaultCatalogLoader = loader
+	catalogOnce = sync.Once{}
+	catalogData = Catalog{}
+
+	catalogMu.Unlock()
+
+	fn()
+
+	// restore loader, and reset the once/data again
+	catalogMu.Lock()
+	defaultCatalogLoader = oldLoader
+	catalogOnce = sync.Once{}
+	catalogData = Catalog{}
+	catalogMu.Unlock()
+}
+
+// Get the singleton catalog instance.
+// Loads from embedded FS on first call,
+// or falls back to default if loading fails.
 func catalog() Catalog {
 	catalogOnce.Do(func() {
-		b, err := catalogFS.ReadFile("catalog.yaml")
-		if err != nil {
-			// Fallback minimal catalog
-			catalogData = Catalog{
-				Concepts: []Exercise{{
-					Slug:      "01_hello",
-					Title:     "Hello, Go!",
-					TestRegex: ".*",
-					Hints:     []string{"Implement Hello() to return 'Hello, Go!'"},
-				}},
-			}
-			return
-		}
-		var cat Catalog
-		if err := yaml.Unmarshal(b, &cat); err != nil {
-			catalogData = Catalog{
-				Concepts: []Exercise{{
-					Slug:      "01_hello",
-					Title:     "Hello, Go!",
-					TestRegex: ".*",
-					Hints:     []string{"Implement Hello() to return 'Hello, Go!'"},
-				}},
-			}
+		cat, err := defaultCatalogLoader()
+		if err != nil || (len(cat.Concepts) == 0 && len(cat.Projects) == 0) {
+			catalogData = fallbackCatalog()
 			return
 		}
 		catalogData = cat
@@ -67,6 +84,84 @@ func catalog() Catalog {
 	return catalogData
 }
 
+// Load catalog from a given FS
+// Returns a Catalog struct.
+func loadCatalogFromFS(fsys fs.FS) (Catalog, error) {
+	concepts, err := loadExercisesDir(fsys, "Catalog/Concepts")
+	if err != nil && !errors.Is(err, fs.ErrNotExist) {
+		return Catalog{}, err
+	}
+
+	projects, err := loadExercisesDir(fsys, "Catalog/Projects")
+	if err != nil && !errors.Is(err, fs.ErrNotExist) {
+		return Catalog{}, err
+	}
+
+	// Deterministic ordering
+	sort.Slice(concepts, func(i, j int) bool { return concepts[i].Slug < concepts[j].Slug })
+	sort.Slice(projects, func(i, j int) bool { return projects[i].Slug < projects[j].Slug })
+
+	return Catalog{
+		Concepts: concepts,
+		Projects: projects,
+	}, nil
+}
+
+// Load all exercises from a given directory in the FS
+// Returns a slice of Exercise structs.
+func loadExercisesDir(fsys fs.FS, dir string) ([]Exercise, error) {
+	entries, err := fs.ReadDir(fsys, dir)
+	if err != nil {
+		return nil, err
+	}
+
+	var out []Exercise
+
+	for _, e := range entries {
+		if e.IsDir() {
+			continue
+		}
+
+		name := e.Name()
+		if ext := filepath.Ext(name); ext != ".yaml" && ext != ".yml" {
+			continue
+		}
+
+		b, err := fs.ReadFile(fsys, filepath.Join(dir, name))
+		if err != nil {
+			return nil, err
+		}
+
+		var ex Exercise
+		if err := yaml.Unmarshal(b, &ex); err != nil {
+			return nil, fmt.Errorf("%s: %w", name, err)
+		}
+
+		if ex.Slug == "" {
+			return nil, fmt.Errorf("%s: missing slug", name)
+		}
+
+		out = append(out, ex)
+	}
+
+	return out, nil
+}
+
+// Fallback catalog in case of errors
+// or no embedded exercises found.
+func fallbackCatalog() Catalog {
+	return Catalog{
+		Concepts: []Exercise{{
+			Slug:      "01_hello",
+			Title:     "Hello, Go!",
+			TestRegex: ".*",
+			Hints:     []string{"Implement Hello() to return 'Hello, Go!'"},
+		}},
+	}
+}
+
+// Discover local exercises from "exercises" directory
+// Returns a slice of Exercise structs.
 func discoverLocal() ([]Exercise, error) {
 	var items []Exercise
 	entries, err := os.ReadDir("exercises")
@@ -76,6 +171,7 @@ func discoverLocal() ([]Exercise, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	for _, e := range entries {
 		if e.IsDir() {
 			slug := e.Name()
@@ -90,6 +186,7 @@ func discoverLocal() ([]Exercise, error) {
 	return items, nil
 }
 
+// List all exercises from catalog or local exercises.
 func ListAll() (Catalog, error) {
 	locals, err := discoverLocal()
 	if err != nil {
@@ -97,14 +194,15 @@ func ListAll() (Catalog, error) {
 	}
 
 	if len(locals) > 0 {
-		// For simplicity, if local exercises are present, we'll only return them for now.
-		// A more robust solution might merge local and catalog exercises.
 		return Catalog{Concepts: locals}, nil
 	}
+
 	return catalog(), nil
 }
 
+// Get exercise by slug from catalog or local exercises.
 func Get(slug string) (Exercise, error) {
+	// Search catalog
 	for _, ex := range catalog().Concepts {
 		if ex.Slug == slug {
 			return ex, nil
@@ -115,6 +213,8 @@ func Get(slug string) (Exercise, error) {
 			return ex, nil
 		}
 	}
+
+	// Search local
 	locals, err := discoverLocal()
 	if err != nil {
 		return Exercise{}, err
@@ -124,11 +224,13 @@ func Get(slug string) (Exercise, error) {
 			return ex, nil
 		}
 	}
+
 	return Exercise{}, fmt.Errorf("exercise not found: %s", slug)
 }
 
+// Reset exercise template for a given slug
+// from embedded FS to local exercises dir.
 func Reset(ex Exercise) error {
-	// Only supported for built-in embedded templates
 	if !templateExists(ex.Slug) {
 		return fmt.Errorf("reset unsupported for non-embedded exercise '%s'", ex.Slug)
 	}
@@ -141,6 +243,7 @@ func templateExists(slug string) bool {
 	return err == nil
 }
 
+// Initialize all exercises from embedded templates.
 func InitAll() error {
 	for _, ex := range catalog().Concepts {
 		if err := copyExerciseTemplate(ex.Slug); err != nil {
@@ -155,9 +258,11 @@ func InitAll() error {
 	return nil
 }
 
+// Copy exercise template from embedded FS to local exercises dir.
 func copyExerciseTemplate(slug string) error {
 	targetDir := filepath.Join("exercises", slug)
-	// Remove and recreate to ensure a clean state
+
+	// Clean slate
 	_ = os.RemoveAll(targetDir)
 	if err := os.MkdirAll(targetDir, 0o755); err != nil {
 		return err
@@ -168,17 +273,22 @@ func copyExerciseTemplate(slug string) error {
 		if err != nil {
 			return err
 		}
+
 		rel, err := filepath.Rel(root, path)
 		if err != nil {
 			return err
 		}
+
 		if rel == "." {
 			return nil
 		}
+
 		dest := filepath.Join(targetDir, rel)
+
 		if d.IsDir() {
 			return os.MkdirAll(dest, 0o755)
 		}
+
 		data, err := fs.ReadFile(templatesFS, path)
 		if err != nil {
 			return err

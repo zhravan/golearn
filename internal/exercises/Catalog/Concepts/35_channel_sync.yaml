@@ -1,0 +1,5 @@
+- slug: 35_channel_sync
+  title: Channel Synchronization
+  test_regex: ".*"
+  hints:
+    - Use a buffered boolean channel and wait till go routine completes.

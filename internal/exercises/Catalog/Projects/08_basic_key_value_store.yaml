@@ -1,0 +1,5 @@
+- slug: 08_basic_key_value_store
+  title: Basic Key-Value Store (Hard)
+  test_regex: ".*"
+  hints:
+    - Implement an in-memory key-value store with basic CRUD operations and optional persistence.
