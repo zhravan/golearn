@@ -48,27 +48,26 @@ var (
 // withTestCatalogLoader temporarily overrides the catalog loader
 // and resets internal singleton state for the duration of the test.
 func withTestCatalogLoader(loader func() (Catalog, error), fn func()) {
-    catalogMu.Lock()
+	catalogMu.Lock()
 
-    oldLoader := defaultCatalogLoader
+	oldLoader := defaultCatalogLoader
 
-    // override loader + reset singleton
-    defaultCatalogLoader = loader
-    catalogOnce = sync.Once{}
-    catalogData = Catalog{}
+	// override loader + reset singleton
+	defaultCatalogLoader = loader
+	catalogOnce = sync.Once{}
+	catalogData = Catalog{}
 
-    catalogMu.Unlock()
+	catalogMu.Unlock()
 
-    fn()
+	fn()
 
-    // restore loader, and reset the once/data again
-    catalogMu.Lock()
-    defaultCatalogLoader = oldLoader
-    catalogOnce = sync.Once{}
-    catalogData = Catalog{}
-    catalogMu.Unlock()
+	// restore loader, and reset the once/data again
+	catalogMu.Lock()
+	defaultCatalogLoader = oldLoader
+	catalogOnce = sync.Once{}
+	catalogData = Catalog{}
+	catalogMu.Unlock()
 }
-
 
 // Get the singleton catalog instance.
 // Loads from embedded FS on first call,
