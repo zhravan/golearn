@@ -1,5 +1,5 @@
-- slug: 06_if_else
-  title: If/Else
-  test_regex: ".*"
-  hints:
-    - Handle negative, zero, and positive cases.
+slug: 06_if_else
+title: If/Else
+test_regex: ".*"
+hints:
+  - Handle negative, zero, and positive cases.

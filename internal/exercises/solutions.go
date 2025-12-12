@@ -5,30 +5,38 @@ import (
 	"errors"
 	"io/fs"
 	"os"
+	pathpkg "path"
 	"path/filepath"
 	"strings"
 )
 
-// Embed the canonical solutions alongside templates. We do not expose these via CLI directly.
-//
 //go:embed all:solutions/**
 var solutionsFS embed.FS
 
-// SolutionExists reports whether we have an embedded solution for the given slug.
-func SolutionExists(slug string) bool {
-	root := filepath.Join("solutions", slug)
+// SolutionExists reports whether a solution directory exists in the embedded solutionsFS.
+// dirName is the directory name under solutions/ (usually the exercise's Path).
+func SolutionExists(dirName string) bool {
+	root := pathpkg.Join("solutions", dirName)
 	_, err := fs.Stat(solutionsFS, root)
 	return err == nil
 }
 
-// CreateSolutionSandbox creates a temporary module containing the solution implementation
-// files and the original tests from templates for the given exercise slug.
-// The returned directory can be used as the working directory for `go test`.
+// CreateSolutionSandbox creates a temporary sandbox directory for the solution of the given exercise slug.
+// It copies the solution implementation and test files into the sandbox.
+// It returns the path to the sandbox, a cleanup function to remove it, and any error encountered.
 func CreateSolutionSandbox(slug string) (string, func(), error) {
-	if !templateExists(slug) {
+	// Look up exercise to get the correct source Directory
+	ex, err := Get(slug)
+	if err != nil {
+		return "", func() {}, err
+	}
+
+	srcDir := ex.Path() // Uses Dir if set, else Slug
+
+	if !templateExists(srcDir) {
 		return "", func() {}, errors.New("no template found for exercise")
 	}
-	if !SolutionExists(slug) {
+	if !SolutionExists(srcDir) {
 		return "", func() {}, errors.New("no embedded solution available")
 	}
 
@@ -38,7 +46,7 @@ func CreateSolutionSandbox(slug string) (string, func(), error) {
 	}
 	cleanup := func() { _ = os.RemoveAll(workDir) }
 
-	// 1) Create a minimal go.mod. We pin testify which is used by some tests.
+	// Create go.mod using the SLUG (01) for the module name
 	goMod := "module golearn/tmp/" + strings.ReplaceAll(slug, "_", "-") + "\n\n" +
 		"go 1.22.0\n\n" +
 		"require github.com/stretchr/testify v1.11.0\n"
@@ -47,8 +55,8 @@ func CreateSolutionSandbox(slug string) (string, func(), error) {
 		return "", func() {}, err
 	}
 
-	// 2) Copy tests from embedded templates
-	templateRoot := filepath.Join("templates", slug)
+	// Copy tests from templates (using srcDir 101)
+	templateRoot := filepath.Join("templates", srcDir)
 	if err := fs.WalkDir(templatesFS, templateRoot, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
@@ -59,26 +67,19 @@ func CreateSolutionSandbox(slug string) (string, func(), error) {
 		if !strings.HasSuffix(path, "_test.go") {
 			return nil
 		}
-		rel, err := filepath.Rel(templateRoot, path)
-		if err != nil {
-			return err
-		}
+
+		rel, _ := filepath.Rel(templateRoot, path)
 		dest := filepath.Join(workDir, rel)
-		if err := os.MkdirAll(filepath.Dir(dest), 0o755); err != nil {
-			return err
-		}
-		data, err := fs.ReadFile(templatesFS, path)
-		if err != nil {
-			return err
-		}
+		_ = os.MkdirAll(filepath.Dir(dest), 0o755)
+		data, _ := fs.ReadFile(templatesFS, path)
 		return os.WriteFile(dest, data, 0o644)
 	}); err != nil {
 		cleanup()
 		return "", func() {}, err
 	}
 
-	// 3) Copy solution implementation files (exclude *_test.go just in case)
-	solutionRoot := filepath.Join("solutions", slug)
+	// Copy solution implementation from solutions (using srcDir 101)
+	solutionRoot := filepath.Join("solutions", srcDir)
 	if err := fs.WalkDir(solutionsFS, solutionRoot, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
@@ -89,18 +90,11 @@ func CreateSolutionSandbox(slug string) (string, func(), error) {
 		if strings.HasSuffix(path, "_test.go") {
 			return nil
 		}
-		rel, err := filepath.Rel(solutionRoot, path)
-		if err != nil {
-			return err
-		}
+
+		rel, _ := filepath.Rel(solutionRoot, path)
 		dest := filepath.Join(workDir, rel)
-		if err := os.MkdirAll(filepath.Dir(dest), 0o755); err != nil {
-			return err
-		}
-		data, err := fs.ReadFile(solutionsFS, path)
-		if err != nil {
-			return err
-		}
+		_ = os.MkdirAll(filepath.Dir(dest), 0o755)
+		data, _ := fs.ReadFile(solutionsFS, path)
 		return os.WriteFile(dest, data, 0o644)
 	}); err != nil {
 		cleanup()

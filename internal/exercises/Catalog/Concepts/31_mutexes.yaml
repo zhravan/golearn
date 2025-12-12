@@ -1,5 +1,5 @@
-- slug: 31_mutexes
-  title: Mutexes
-  test_regex: ".*"
-  hints:
-    - Use `sync.Mutex` to synchronize access to a shared resource.
+slug: 31_mutexes
+title: Mutexes
+test_regex: ".*"
+hints:
+  - Use `sync.Mutex` to synchronize access to a shared resource.

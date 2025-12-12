@@ -1,5 +1,5 @@
-- slug: 33_string_formatting
-  title: String Formatting
-  test_regex: ".*"
-  hints:
-    - Use `fmt.Sprintf` and `%s`, `%d`, `%f` formatting directives to format strings, integers, and floats.
+slug: 33_string_formatting
+title: String Formatting
+test_regex: ".*"
+hints:
+  - Use `fmt.Sprintf` and `%s`, `%d`, `%f` formatting directives to format strings, integers, and floats.

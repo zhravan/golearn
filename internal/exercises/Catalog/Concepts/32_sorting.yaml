@@ -1,5 +1,5 @@
-- slug: 32_sorting
-  title: Sorting
-  test_regex: ".*"
-  hints:
-    - Use `slice.Sort` for sorting slices.
+slug: 32_sorting
+title: Sorting
+test_regex: ".*"
+hints:
+  - Use `slice.Sort` for sorting slices.

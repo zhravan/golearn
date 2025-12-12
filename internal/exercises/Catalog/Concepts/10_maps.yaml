@@ -1,5 +1,5 @@
-- slug: 10_maps
-  title: Maps
-  test_regex: ".*"
-  hints:
-    - Use strings.Fields and map[string]int for word counts.
+slug: 10_maps
+title: Maps
+test_regex: ".*"
+hints:
+  - Use strings.Fields and map[string]int for word counts.

@@ -1,5 +1,5 @@
-- slug: 08_arrays
-  title: Arrays
-  test_regex: ".*"
-  hints:
-    - Iterate with range over a fixed-size array.
+slug: 08_arrays
+title: Arrays
+test_regex: ".*"
+hints:
+  - Iterate with range over a fixed-size array.

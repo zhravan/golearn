@@ -1,5 +1,5 @@
-- slug: 11_functions
-  title: Functions
-  test_regex: ".*"
-  hints:
-    - Pass a function and call it.
+slug: 11_functions
+title: Functions
+test_regex: ".*"
+hints:
+  - Pass a function and call it.

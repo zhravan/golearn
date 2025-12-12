@@ -1,5 +1,5 @@
-- slug: 03_variables
-  title: Variables
-  test_regex: ".*"
-  hints:
-    - Use short declarations (:=) and return multiple values.
+slug: 03_variables
+title: Variables
+test_regex: ".*"
+hints:
+  - Use short declarations (:=) and return multiple values.

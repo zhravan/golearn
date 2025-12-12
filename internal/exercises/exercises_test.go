@@ -2,7 +2,6 @@ package exercises
 
 import (
 	"strings"
-	"sync"
 	"testing"
 	"testing/fstest"
 
@@ -43,14 +42,9 @@ func TestLoadExercisesDir_LoadsValidYAML(t *testing.T) {
 		t.Fatalf("expected 2 items, got %d", len(items))
 	}
 
-	// Unsorted read → sorted in loadCatalogFromFS, but loadExercisesDir just loads.
-	found := map[string]bool{
-		items[0].Slug: true,
-		items[1].Slug: true,
-	}
-
-	if !found["01_hello"] || !found["02_vars"] {
-		t.Fatalf("missing expected slugs: %v", found)
+	// Unsorted read → sorted in loadCatalogFromFS, but loadExercisesDir returns them sorted by slug.
+	if items[0].Slug != "01_hello" || items[1].Slug != "02_vars" {
+		t.Fatalf("items not sorted properly: %v", items)
 	}
 }
 
@@ -156,24 +150,22 @@ func TestFallbackCatalog(t *testing.T) {
 }
 
 func TestCatalog_UsesDirectoryLoader(t *testing.T) {
-	// Reset catalogOnce
-	catalogOnce = sync.Once{}
-
+	// We verify that the singleton `catalog()` function actually calls our custom loader logic.
 	fsys := fstest.MapFS{
 		"Catalog/Concepts/a.yaml": &fstest.MapFile{
 			Data: y(Exercise{Slug: "01_test"}),
 		},
 	}
 
-	// Call loader directly
-	cat, err := loadCatalogFromFS(fsys)
-	if err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
-
-	if len(cat.Concepts) != 1 || cat.Concepts[0].Slug != "01_test" {
-		t.Fatalf("loadCatalogFromFS did not correctly read from FS")
-	}
+	// Use the exported helper to swap the loader with one that uses our test filesystem
+	WithTestCatalogLoader(func() (Catalog, error) {
+		return loadCatalogFromFS(fsys)
+	}, func() {
+		cat := catalog()
+		if len(cat.Concepts) != 1 || cat.Concepts[0].Slug != "01_test" {
+			t.Fatalf("catalog() did not load from the injected FS")
+		}
+	})
 }
 
 func TestDiscoverLocal_NoDir(t *testing.T) {
@@ -184,14 +176,15 @@ func TestDiscoverLocal_NoDir(t *testing.T) {
 }
 
 func TestCatalogOverride(t *testing.T) {
-	withTestCatalogLoader(func() (Catalog, error) {
+	WithTestCatalogLoader(func() (Catalog, error) {
 		return Catalog{
 			Concepts: []Exercise{{Slug: "01_mock"}},
 		}, nil
 	}, func() {
 		c := catalog()
+
 		if len(c.Concepts) != 1 || c.Concepts[0].Slug != "01_mock" {
-			t.Fatalf("expected mock catalog")
+			t.Fatalf("expected mock catalog, got: %+v", c)
 		}
 	})
 }

@@ -1,5 +1,5 @@
-- slug: 26_errors
-  title: Errors
-  test_regex: ".*"
-  hints:
-    - Write a function that returns an error and handle it.
+slug: 26_errors
+title: Errors
+test_regex: ".*"
+hints:
+  - Write a function that returns an error and handle it.

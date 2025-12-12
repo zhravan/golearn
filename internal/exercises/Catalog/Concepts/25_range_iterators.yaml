@@ -1,5 +1,5 @@
-- slug: 25_range_iterators
-  title: Range over Iterators
-  test_regex: ".*"
-  hints:
-    - Implement a custom iterator and use range over it.
+slug: 25_range_iterators
+title: Range over Iterators
+test_regex: ".*"
+hints:
+  - Implement a custom iterator and use range over it.

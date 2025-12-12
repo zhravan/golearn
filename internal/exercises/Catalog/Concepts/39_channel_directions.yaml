@@ -1,9 +1,9 @@
-- slug: 39_channel_directions
-  title: Channel Directions
-  test_regex: ".*"
-  hints:
-    - Create two channels, one for sending jobs and one for receiving results.
-    - Start 5 workers using go routines.
-    - Send 50 jobs to the worker pool.
-    - Receive results from the worker pool and store them in a `rs` slice.
-    - Enforce type safety by specifying the channel directions in worker function.
+slug: 39_channel_directions
+title: Channel Directions
+test_regex: ".*"
+hints:
+  - Create two channels, one for sending jobs and one for receiving results.
+  - Start 5 workers using go routines.
+  - Send 50 jobs to the worker pool.
+  - Receive results from the worker pool and store them in a `rs` slice.
+  - Enforce type safety by specifying the channel directions in worker function.

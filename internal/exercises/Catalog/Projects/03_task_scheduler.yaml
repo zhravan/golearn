@@ -1,5 +1,6 @@
-- slug: 03_task_scheduler
-  title: Task Scheduler (Hard)
-  test_regex: ".*"
-  hints:
-    - Create a task scheduler with features like adding/removing tasks, a custom iterator, closures for task execution, and custom error handling.
+slug: 03_task_scheduler
+dir: 103_task_scheduler
+title: Task Scheduler (Hard)
+test_regex: ".*"
+hints:
+  - Create a task scheduler with features like adding/removing tasks, a custom iterator, closures for task execution, and custom error handling.

@@ -1,7 +1,7 @@
-- slug: 46_non_blocking_channel_operations
-  title: Non-blocking channel operations
-  test_regex: ".*"
-  hints:
-    - Use `default` case in select to handle non-blocking channel operations.
-    - Safely increment `dropped` using mutex `Lock()` and `Unlock()`.
+slug: 46_non_blocking_channel_operations
+title: Non-blocking channel operations
+test_regex: ".*"
+hints:
+  - Use `default` case in select to handle non-blocking channel operations.
+  - Safely increment `dropped` using mutex `Lock()` and `Unlock()`.
 

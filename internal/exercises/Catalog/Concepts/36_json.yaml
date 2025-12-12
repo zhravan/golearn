@@ -1,9 +1,9 @@
-- slug: 36_json
-  title: JSON
-  test_regex: ".*"
-  hints:
-    - Use the encoding/json package to work with JSON data.
-    - Implement MarshalPerson to convert a struct into JSON using json.Marshal.
-    - Implement UnmarshalPerson to convert a JSON string into a struct using json.Unmarshal.
-    - Handle and return errors properly in both functions.
+slug: 36_json
+title: JSON
+test_regex: ".*"
+hints:
+  - Use the encoding/json package to work with JSON data.
+  - Implement MarshalPerson to convert a struct into JSON using json.Marshal.
+  - Implement UnmarshalPerson to convert a JSON string into a struct using json.Unmarshal.
+  - Handle and return errors properly in both functions.
 

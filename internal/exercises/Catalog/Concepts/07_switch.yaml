@@ -1,5 +1,5 @@
-- slug: 07_switch
-  title: Switch
-  test_regex: ".*"
-  hints:
-    - Match multiple cases for weekend days.
+slug: 07_switch
+title: Switch
+test_regex: ".*"
+hints:
+  - Match multiple cases for weekend days.

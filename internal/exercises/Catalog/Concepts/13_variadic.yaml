@@ -1,5 +1,5 @@
-- slug: 13_variadic
-  title: Variadic Functions
-  test_regex: ".*"
-  hints:
-    - Use '...' to accept any number of ints and sum them.
+slug: 13_variadic
+title: Variadic Functions
+test_regex: ".*"
+hints:
+  - Use '...' to accept any number of ints and sum them.

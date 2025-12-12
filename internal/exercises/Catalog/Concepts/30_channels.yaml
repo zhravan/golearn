@@ -1,5 +1,5 @@
-- slug: 30_channels
-  title: Channels
-  test_regex: ".*"
-  hints:
-    - Use `make(chan T)` to create a channel and `<-` to send and receive on it.
+slug: 30_channels
+title: Channels
+test_regex: ".*"
+hints:
+  - Use `make(chan T)` to create a channel and `<-` to send and receive on it.

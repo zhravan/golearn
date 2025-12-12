@@ -1,5 +1,5 @@
-- slug: 18_strings_runes
-  title: Strings and Runes
-  test_regex: ".*"
-  hints:
-    - Iterate over a string with range to count runes, and demonstrate string manipulation.
+slug: 18_strings_runes
+title: Strings and Runes
+test_regex: ".*"
+hints:
+  - Iterate over a string with range to count runes, and demonstrate string manipulation.

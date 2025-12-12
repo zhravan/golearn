@@ -1,5 +1,6 @@
-- slug: 04_http_server
-  title: HTTP Server (Easy)
-  test_regex: ".*"
-  hints:
-    - Implement a basic HTTP server that responds to GET requests.
+slug: 04_http_server
+dir: 104_http_server
+title: HTTP Server (Easy)
+test_regex: ".*"
+hints:
+  - Implement a basic HTTP server that responds to GET requests.

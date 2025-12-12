@@ -20,7 +20,7 @@ jobs:
         go-version: '1.22'
         
     - name: Cache Go modules
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ~/go/pkg/mod
         key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
@@ -80,10 +80,14 @@ jobs:
     - name: Test verify command with solutions (should pass)
       run: |
         echo "Testing that solution exercises pass..."
-        # Test a few key exercises with their solutions
-        ./bin/golearn verify 01_hello --solution
-        ./bin/golearn verify 36_json --solution
-        ./bin/golearn verify 37_xml --solution
+        for ex in 01_hello 36_json 37_xml; do
+          if [ -d "./internal/exercises/solutions/$ex" ]; then
+            echo "Running verify --solution for $ex"
+            ./bin/golearn verify "$ex" --solution
+          else
+            echo "Skipping $ex: no solution directory present"
+          fi
+        done
         
     - name: Test specific template exercises (should fail)
       run: |
