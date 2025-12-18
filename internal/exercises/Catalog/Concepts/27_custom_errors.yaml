@@ -1,0 +1,5 @@
+slug: 27_custom_errors
+title: Custom Errors
+test_regex: ".*"
+hints:
+  - Define a custom error type and return it from a function.

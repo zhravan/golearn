@@ -1,0 +1,6 @@
+slug: 06_simple_chat_app
+dir: 106_simple_chat_app
+title: Simple Chat Application (Medium)
+test_regex: ".*"
+hints:
+  - Create a basic client-server chat application.

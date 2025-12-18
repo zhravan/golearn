@@ -1,0 +1,5 @@
+slug: 02_values
+title: Values
+test_regex: ".*"
+hints:
+  - Use fmt.Sprintf to format values.

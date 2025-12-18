@@ -1,0 +1,5 @@
+slug: 05_for
+title: For
+test_regex: ".*"
+hints:
+  - Accumulate a sum with a for loop.

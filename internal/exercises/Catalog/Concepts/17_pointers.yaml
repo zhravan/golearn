@@ -1,0 +1,5 @@
+slug: 17_pointers
+title: Pointers
+test_regex: ".*"
+hints:
+  - Write a function that takes a pointer, modifies the value, and returns the pointer.

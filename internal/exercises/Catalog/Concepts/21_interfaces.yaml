@@ -1,0 +1,5 @@
+slug: 21_interfaces
+title: Interfaces
+test_regex: ".*"
+hints:
+  - Define an interface and implement it for a struct.

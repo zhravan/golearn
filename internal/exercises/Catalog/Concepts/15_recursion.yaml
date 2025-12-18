@@ -1,0 +1,5 @@
+slug: 15_recursion
+title: Recursion
+test_regex: ".*"
+hints:
+  - Implement a recursive factorial function.

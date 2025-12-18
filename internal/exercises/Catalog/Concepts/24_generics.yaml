@@ -1,0 +1,5 @@
+slug: 24_generics
+title: Generics
+test_regex: ".*"
+hints:
+  - Write a generic function that works with different types.

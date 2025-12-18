@@ -1,0 +1,5 @@
+slug: 01_hello
+title: Hello, Go!
+test_regex: ".*"
+hints:
+  - Implement Hello() to return 'Hello, Go!'

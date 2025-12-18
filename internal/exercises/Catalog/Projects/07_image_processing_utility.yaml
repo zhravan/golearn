@@ -1,0 +1,6 @@
+slug: 07_image_processing_utility
+dir: 107_image_processing_utility
+title: Image Processing Utility (Hard)
+test_regex: ".*"
+hints:
+  - Develop a command-line utility for basic image transformations like resizing or converting to grayscale.

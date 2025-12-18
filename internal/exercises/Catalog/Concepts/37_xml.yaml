@@ -1,0 +1,8 @@
+slug: 37_xml
+title: XML Encoding and Decoding
+test_regex: ".*"
+hints:
+  - Use encoding/xml package for marshaling and unmarshaling XML data.
+  - Add XML struct tags using `xml:"fieldname"` to map struct fields to XML elements.
+  - Use xml.Marshal to convert structs to XML bytes.
+  - Use xml.Unmarshal to parse XML bytes into structs.

@@ -1,0 +1,5 @@
+slug: 23_struct_embedding
+title: Struct Embedding
+test_regex: ".*"
+hints:
+  - Embed one struct within another and access the inner struct's fields directly.

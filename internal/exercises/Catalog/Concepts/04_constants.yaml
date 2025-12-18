@@ -1,0 +1,5 @@
+slug: 04_constants
+title: Constants
+test_regex: ".*"
+hints:
+  - Use math.Pi and constant expressions.

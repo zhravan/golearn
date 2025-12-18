@@ -1,0 +1,5 @@
+slug: 12_multi_return
+title: Multiple Return Values
+test_regex: ".*"
+hints:
+  - Return quotient, remainder, and an error for divide-by-zero.

@@ -1,0 +1,5 @@
+slug: 22_enums
+title: Enums
+test_regex: ".*"
+hints:
+  - Use iota to create a set of related constants as an enumeration.

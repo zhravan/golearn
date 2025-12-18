@@ -1,0 +1,5 @@
+slug: 29_go_routines
+title: Go Routines
+test_regex: ".*"
+hints:
+  - Use `go` keyword to execute functions concurrently using go routines.

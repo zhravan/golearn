@@ -1,0 +1,5 @@
+slug: 14_closures
+title: Closures
+test_regex: ".*"
+hints:
+  - Implement a function that returns a closure, capturing an outer variable.
